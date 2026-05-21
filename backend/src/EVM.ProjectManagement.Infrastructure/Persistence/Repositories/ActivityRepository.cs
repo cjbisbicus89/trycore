@@ -20,17 +20,20 @@ public sealed class ActivityRepository : IActivityRepository
         => await this.context.Activities.Where(a => a.ProjectId == projectId).ToListAsync(cancellationToken).ContinueWith(t => t.Result.AsReadOnly(), cancellationToken);
 
     public async Task AddAsync(Activity activity, CancellationToken cancellationToken = default)
-        => await this.context.Activities.AddAsync(activity, cancellationToken);
+    {
+        await this.context.Activities.AddAsync(activity, cancellationToken);
+        await this.context.SaveChangesAsync(cancellationToken);
+    }
 
     public async Task UpdateAsync(Activity activity, CancellationToken cancellationToken = default)
     {
         this.context.Activities.Update(activity);
-        await Task.CompletedTask;
+        await this.context.SaveChangesAsync(cancellationToken);
     }
 
     public async Task DeleteAsync(Activity activity, CancellationToken cancellationToken = default)
     {
         this.context.Activities.Remove(activity);
-        await Task.CompletedTask;
+        await this.context.SaveChangesAsync(cancellationToken);
     }
 }

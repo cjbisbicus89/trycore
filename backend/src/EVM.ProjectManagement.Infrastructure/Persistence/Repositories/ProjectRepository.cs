@@ -23,17 +23,20 @@ public sealed class ProjectRepository : IProjectRepository
         => await this.context.Projects.ToListAsync(cancellationToken).ContinueWith(t => t.Result.AsReadOnly(), cancellationToken);
 
     public async Task AddAsync(Project project, CancellationToken cancellationToken = default)
-        => await this.context.Projects.AddAsync(project, cancellationToken);
+    {
+        await this.context.Projects.AddAsync(project, cancellationToken);
+        await this.context.SaveChangesAsync(cancellationToken);
+    }
 
     public async Task UpdateAsync(Project project, CancellationToken cancellationToken = default)
     {
         this.context.Projects.Update(project);
-        await Task.CompletedTask;
+        await this.context.SaveChangesAsync(cancellationToken);
     }
 
     public async Task DeleteAsync(Project project, CancellationToken cancellationToken = default)
     {
         this.context.Projects.Remove(project);
-        await Task.CompletedTask;
+        await this.context.SaveChangesAsync(cancellationToken);
     }
 }
