@@ -1,5 +1,8 @@
 namespace EVM.ProjectManagement.Application.Activities.DTOs;
 
-public sealed class UpdateActivityRequest
-{
-}
+public sealed record UpdateActivityRequest(
+    string Name,
+    decimal BudgetedCost,
+    decimal PlannedPercentage,
+    decimal ActualPercentage,
+    decimal ActualCost);
