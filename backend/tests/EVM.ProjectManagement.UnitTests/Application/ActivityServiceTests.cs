@@ -2,6 +2,7 @@ using EVM.ProjectManagement.Application.Activities;
 using EVM.ProjectManagement.Application.Activities.DTOs;
 using EVM.ProjectManagement.Application.Common.Exceptions;
 using EVM.ProjectManagement.Domain.Repositories;
+using EVM.ProjectManagement.Domain.Services;
 using EVM.ProjectManagement.UnitTests.Builders;
 using Moq;
 using Xunit;
@@ -12,6 +13,7 @@ public sealed class ActivityServiceTests
 {
     private readonly Mock<IActivityRepository> _activityRepositoryMock = new();
     private readonly Mock<IProjectRepository> _projectRepositoryMock = new();
+    private readonly Mock<IEVMCalculator> _evmCalculatorMock = new();
     private readonly ActivityService _activityService;
 
     public ActivityServiceTests()
@@ -19,6 +21,7 @@ public sealed class ActivityServiceTests
         _activityService = new ActivityService(
             _activityRepositoryMock.Object,
             _projectRepositoryMock.Object,
+            _evmCalculatorMock.Object,
             Mock.Of<Microsoft.Extensions.Logging.ILogger<ActivityService>>());
     }
 

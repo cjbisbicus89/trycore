@@ -3,6 +3,7 @@ using EVM.ProjectManagement.Application.Activities.Extensions;
 using EVM.ProjectManagement.Application.Common.Exceptions;
 using EVM.ProjectManagement.Domain.Entities;
 using EVM.ProjectManagement.Domain.Repositories;
+using EVM.ProjectManagement.Domain.Services;
 using Microsoft.Extensions.Logging;
 
 namespace EVM.ProjectManagement.Application.Activities;
@@ -11,15 +12,18 @@ public sealed class ActivityService : IActivityService
 {
     private readonly IActivityRepository _activityRepository;
     private readonly IProjectRepository _projectRepository;
+    private readonly IEVMCalculator _evmCalculator;
     private readonly ILogger<ActivityService> _logger;
 
     public ActivityService(
         IActivityRepository activityRepository,
         IProjectRepository projectRepository,
+        IEVMCalculator evmCalculator,
         ILogger<ActivityService> logger)
     {
         _activityRepository = activityRepository;
         _projectRepository = projectRepository;
+        _evmCalculator = evmCalculator;
         _logger = logger;
     }
 
@@ -27,7 +31,7 @@ public sealed class ActivityService : IActivityService
     {
         var activities = await _activityRepository.GetByProjectIdAsync(projectId, cancellationToken);
         return activities
-            .Select(a => a.ToResponse(new Domain.Services.EVMCalculationService()))
+            .Select(a => a.ToResponse(_evmCalculator))
             .ToList()
             .AsReadOnly();
     }
@@ -38,7 +42,7 @@ public sealed class ActivityService : IActivityService
         if (activity is null)
             throw new NotFoundException($"Activity with ID {id} not found");
 
-        return activity.ToResponse(new Domain.Services.EVMCalculationService());
+        return activity.ToResponse(_evmCalculator);
     }
 
     public async Task<ActivityResponse> CreateAsync(CreateActivityRequest request, CancellationToken cancellationToken = default)
@@ -60,7 +64,7 @@ public sealed class ActivityService : IActivityService
 
         _logger.LogInformation("Activity {ActivityId} created for project {ProjectId}", activity.Id, activity.ProjectId);
 
-        return activity.ToResponse(new Domain.Services.EVMCalculationService());
+        return activity.ToResponse(_evmCalculator);
     }
 
     public async Task<ActivityResponse> UpdateAsync(Guid id, UpdateActivityRequest request, CancellationToken cancellationToken = default)
@@ -78,7 +82,7 @@ public sealed class ActivityService : IActivityService
 
         await _activityRepository.UpdateAsync(activity, cancellationToken);
 
-        return activity.ToResponse(new Domain.Services.EVMCalculationService());
+        return activity.ToResponse(_evmCalculator);
     }
 
     public async Task DeleteAsync(Guid id, CancellationToken cancellationToken = default)
