@@ -24,6 +24,7 @@ services:
     environment:
       ConnectionStrings__Default: "Host=db;Database=evm_db;Username=evm_user;Password=evm_pass"
       ASPNETCORE_ENVIRONMENT: Development
+      ASPNETCORE_URLS: "http://+:8080"
     depends_on:
       db:
         condition: service_healthy

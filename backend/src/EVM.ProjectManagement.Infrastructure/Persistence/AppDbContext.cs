@@ -13,4 +13,7 @@ public sealed class AppDbContext : DbContext
     public DbSet<Project> Projects => this.Set<Project>();
 
     public DbSet<Activity> Activities => this.Set<Activity>();
+
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+        => modelBuilder.ApplyConfigurationsFromAssembly(typeof(AppDbContext).Assembly);
 }

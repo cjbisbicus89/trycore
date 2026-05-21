@@ -1,5 +1,50 @@
 namespace EVM.ProjectManagement.IntegrationTests.Projects;
 
-public sealed class ProjectsControllerTests
+using System.Net;
+using System.Net.Http.Json;
+using EVM.ProjectManagement.Application.Projects.DTOs;
+using EVM.ProjectManagement.IntegrationTests.Fixtures;
+using Xunit;
+
+public sealed class ProjectsControllerTests : IClassFixture<ApiWebApplicationFactory>
 {
+    private readonly HttpClient client;
+
+    public ProjectsControllerTests(ApiWebApplicationFactory factory)
+    {
+        this.client = factory.CreateClient();
+    }
+
+    [Fact]
+    public async Task GetAllReturnsOk()
+    {
+        // Act
+        var response = await this.client.GetAsync("/api/projects");
+
+        // Assert
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+    }
+
+    [Fact]
+    public async Task CreateReturnsCreated()
+    {
+        // Arrange
+        var request = new CreateProjectRequest("Test Project", "Test Description");
+
+        // Act
+        var response = await this.client.PostAsJsonAsync("/api/projects", request);
+
+        // Assert
+        Assert.Equal(HttpStatusCode.Created, response.StatusCode);
+    }
+
+    [Fact]
+    public async Task GetByIdReturnsNotFoundCuandoProyectoNoExiste()
+    {
+        // Act
+        var response = await this.client.GetAsync($"/api/projects/{Guid.NewGuid()}");
+
+        // Assert
+        Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
+    }
 }
