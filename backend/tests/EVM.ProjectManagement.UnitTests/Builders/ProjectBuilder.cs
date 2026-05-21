@@ -1,26 +1,26 @@
-using EVM.ProjectManagement.Domain.Entities;
-
 namespace EVM.ProjectManagement.UnitTests.Builders;
+
+using EVM.ProjectManagement.Domain.Entities;
 
 public sealed class ProjectBuilder
 {
-    private string _name = "Test Project";
-    private string _description = "Test Description";
+    private string name = "Test Project";
+    private string description = "Test Description";
 
     public ProjectBuilder WithName(string name)
     {
-        _name = name;
+        this.name = name;
         return this;
     }
 
     public ProjectBuilder WithDescription(string description)
     {
-        _description = description;
+        this.description = description;
         return this;
     }
 
     public Project Build()
     {
-        return Project.Create(_name, _description);
+        return Project.Create(this.name, this.description);
     }
 }

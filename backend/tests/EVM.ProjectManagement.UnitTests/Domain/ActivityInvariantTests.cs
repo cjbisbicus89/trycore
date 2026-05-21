@@ -1,14 +1,14 @@
+namespace EVM.ProjectManagement.UnitTests.Domain;
+
 using EVM.ProjectManagement.Domain.Entities;
 using EVM.ProjectManagement.Domain.Exceptions;
 using EVM.ProjectManagement.UnitTests.Builders;
 using Xunit;
 
-namespace EVM.ProjectManagement.UnitTests.Domain;
-
 public sealed class ActivityInvariantTests
 {
     [Fact]
-    public void Create_LanzaDomainException_CuandoBudgetedCostMenorOIgualACero()
+    public void CreateLanzaDomainExceptionCuandoBudgetedCostMenorOIgualACero()
     {
         // Arrange
         var projectId = Guid.NewGuid();
@@ -19,7 +19,7 @@ public sealed class ActivityInvariantTests
     }
 
     [Fact]
-    public void Create_LanzaDomainException_CuandoActualPercentageMayorACien()
+    public void CreateLanzaDomainExceptionCuandoActualPercentageMayorACien()
     {
         // Arrange
         var projectId = Guid.NewGuid();
@@ -30,7 +30,7 @@ public sealed class ActivityInvariantTests
     }
 
     [Fact]
-    public void Create_LanzaDomainException_CuandoPlannedPercentageMenorACero()
+    public void CreateLanzaDomainExceptionCuandoPlannedPercentageMenorACero()
     {
         // Arrange
         var projectId = Guid.NewGuid();
@@ -41,7 +41,7 @@ public sealed class ActivityInvariantTests
     }
 
     [Fact]
-    public void Create_LanzaDomainException_CuandoActualCostMenorACero()
+    public void CreateLanzaDomainExceptionCuandoActualCostMenorACero()
     {
         // Arrange
         var projectId = Guid.NewGuid();
@@ -52,18 +52,18 @@ public sealed class ActivityInvariantTests
     }
 
     [Fact]
-    public void Create_LanzaDomainException_CuandoNameVacio()
+    public void CreateLanzaDomainExceptionCuandoNameVacio()
     {
         // Arrange
         var projectId = Guid.NewGuid();
 
         // Act & Assert
-        Assert.Throws<DomainException>(() => Activity.Create(projectId, "", 1000, 50, 25, 300));
+        Assert.Throws<DomainException>(() => Activity.Create(projectId, string.Empty, 1000, 50, 25, 300));
         Assert.Throws<DomainException>(() => Activity.Create(projectId, null!, 1000, 50, 25, 300));
     }
 
     [Fact]
-    public void EarnedValue_CalculadoCorrectamente()
+    public void EarnedValueCalculadoCorrectamente()
     {
         // Arrange
         var activity = new ActivityBuilder()
@@ -79,7 +79,7 @@ public sealed class ActivityInvariantTests
     }
 
     [Fact]
-    public void PlannedValue_CalculadoCorrectamente()
+    public void PlannedValueCalculadoCorrectamente()
     {
         // Arrange
         var activity = new ActivityBuilder()

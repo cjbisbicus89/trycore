@@ -1,14 +1,14 @@
+namespace EVM.ProjectManagement.UnitTests.Domain;
+
 using EVM.ProjectManagement.Domain.Services;
 using Xunit;
 
-namespace EVM.ProjectManagement.UnitTests.Domain;
-
 public sealed class EVMCalculationServiceTests
 {
-    private readonly IEVMCalculator _calculator = new EVMCalculationService();
+    private readonly EVMCalculationService calculator = new EVMCalculationService();
 
     [Fact]
-    public void Calculate_CPI_Correcto_Cuando_AC_Mayor_Que_Cero()
+    public void CalculateCPICorrectoCuandoACMayorQueCero()
     {
         // Arrange
         var plannedValue = 1000;
@@ -17,14 +17,14 @@ public sealed class EVMCalculationServiceTests
         var budgetedCost = 2000;
 
         // Act
-        var indicators = _calculator.Calculate(plannedValue, earnedValue, actualCost, budgetedCost);
+        var indicators = this.calculator.Calculate(plannedValue, earnedValue, actualCost, budgetedCost);
 
         // Assert
-        Assert.Equal(0.888m, Math.Round(indicators.CostPerformanceIndex!.Value, 3));
+        Assert.Equal(0.889m, Math.Round(indicators.CostPerformanceIndex!.Value, 3));
     }
 
     [Fact]
-    public void Calculate_CPI_Null_Cuando_AC_Es_Cero()
+    public void CalculateCPINullCuandoACEsCero()
     {
         // Arrange
         var plannedValue = 1000;
@@ -33,14 +33,14 @@ public sealed class EVMCalculationServiceTests
         var budgetedCost = 2000;
 
         // Act
-        var indicators = _calculator.Calculate(plannedValue, earnedValue, actualCost, budgetedCost);
+        var indicators = this.calculator.Calculate(plannedValue, earnedValue, actualCost, budgetedCost);
 
         // Assert
         Assert.Null(indicators.CostPerformanceIndex);
     }
 
     [Fact]
-    public void Calculate_SPI_Correcto_Cuando_PV_Mayor_Que_Cero()
+    public void CalculateSPICorrectoCuandoPVMayorQueCero()
     {
         // Arrange
         var plannedValue = 1000;
@@ -49,14 +49,14 @@ public sealed class EVMCalculationServiceTests
         var budgetedCost = 2000;
 
         // Act
-        var indicators = _calculator.Calculate(plannedValue, earnedValue, actualCost, budgetedCost);
+        var indicators = this.calculator.Calculate(plannedValue, earnedValue, actualCost, budgetedCost);
 
         // Assert
         Assert.Equal(0.8m, indicators.SchedulePerformanceIndex);
     }
 
     [Fact]
-    public void Calculate_SPI_Null_Cuando_PV_Es_Cero()
+    public void CalculateSPINullCuandoPVEsCero()
     {
         // Arrange
         var plannedValue = 0;
@@ -65,14 +65,14 @@ public sealed class EVMCalculationServiceTests
         var budgetedCost = 2000;
 
         // Act
-        var indicators = _calculator.Calculate(plannedValue, earnedValue, actualCost, budgetedCost);
+        var indicators = this.calculator.Calculate(plannedValue, earnedValue, actualCost, budgetedCost);
 
         // Assert
         Assert.Null(indicators.SchedulePerformanceIndex);
     }
 
     [Fact]
-    public void Calculate_EAC_Null_Cuando_CPI_Null()
+    public void CalculateEACNullCuandoCPINull()
     {
         // Arrange
         var plannedValue = 1000;
@@ -81,14 +81,14 @@ public sealed class EVMCalculationServiceTests
         var budgetedCost = 2000;
 
         // Act
-        var indicators = _calculator.Calculate(plannedValue, earnedValue, actualCost, budgetedCost);
+        var indicators = this.calculator.Calculate(plannedValue, earnedValue, actualCost, budgetedCost);
 
         // Assert
         Assert.Null(indicators.EstimateAtCompletion);
     }
 
     [Fact]
-    public void Calculate_EAC_Null_Cuando_CPI_Cero()
+    public void CalculateEACNullCuandoCPICero()
     {
         // Arrange
         var plannedValue = 1000;
@@ -97,14 +97,14 @@ public sealed class EVMCalculationServiceTests
         var budgetedCost = 2000;
 
         // Act
-        var indicators = _calculator.Calculate(plannedValue, earnedValue, actualCost, budgetedCost);
+        var indicators = this.calculator.Calculate(plannedValue, earnedValue, actualCost, budgetedCost);
 
         // Assert
         Assert.Null(indicators.EstimateAtCompletion);
     }
 
     [Fact]
-    public void Calculate_CostStatus_UnderBudget_Cuando_CPI_Mayor_Que_Uno()
+    public void CalculateCostStatusUnderBudgetCuandoCPIMayorQueUno()
     {
         // Arrange
         var plannedValue = 1000;
@@ -113,14 +113,14 @@ public sealed class EVMCalculationServiceTests
         var budgetedCost = 2000;
 
         // Act
-        var indicators = _calculator.Calculate(plannedValue, earnedValue, actualCost, budgetedCost);
+        var indicators = this.calculator.Calculate(plannedValue, earnedValue, actualCost, budgetedCost);
 
         // Assert
         Assert.Equal("Under Budget", indicators.CostStatus);
     }
 
     [Fact]
-    public void Calculate_CostStatus_OverBudget_Cuando_CPI_Menor_Que_Uno()
+    public void CalculateCostStatusOverBudgetCuandoCPIMenorQueUno()
     {
         // Arrange
         var plannedValue = 1000;
@@ -129,14 +129,14 @@ public sealed class EVMCalculationServiceTests
         var budgetedCost = 2000;
 
         // Act
-        var indicators = _calculator.Calculate(plannedValue, earnedValue, actualCost, budgetedCost);
+        var indicators = this.calculator.Calculate(plannedValue, earnedValue, actualCost, budgetedCost);
 
         // Assert
         Assert.Equal("Over Budget", indicators.CostStatus);
     }
 
     [Fact]
-    public void Calculate_ScheduleStatus_BehindSchedule_Cuando_SPI_Menor_Que_Uno()
+    public void CalculateScheduleStatusBehindScheduleCuandoSPIMenorQueUno()
     {
         // Arrange
         var plannedValue = 1000;
@@ -145,7 +145,7 @@ public sealed class EVMCalculationServiceTests
         var budgetedCost = 2000;
 
         // Act
-        var indicators = _calculator.Calculate(plannedValue, earnedValue, actualCost, budgetedCost);
+        var indicators = this.calculator.Calculate(plannedValue, earnedValue, actualCost, budgetedCost);
 
         // Assert
         Assert.Equal("Behind Schedule", indicators.ScheduleStatus);

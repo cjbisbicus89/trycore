@@ -1,11 +1,11 @@
+namespace EVM.ProjectManagement.IntegrationTests.Fixtures;
+
 using EVM.ProjectManagement.API;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-
-namespace EVM.ProjectManagement.IntegrationTests.Fixtures;
 
 public sealed class ApiWebApplicationFactory : WebApplicationFactory<Program>
 {
