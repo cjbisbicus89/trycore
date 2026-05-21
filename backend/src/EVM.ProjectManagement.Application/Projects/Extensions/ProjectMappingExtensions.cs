@@ -1,9 +1,9 @@
+namespace EVM.ProjectManagement.Application.Projects.Extensions;
+
 using EVM.ProjectManagement.Application.Activities.DTOs;
 using EVM.ProjectManagement.Application.Projects.DTOs;
 using EVM.ProjectManagement.Domain.Entities;
 using EVM.ProjectManagement.Domain.ValueObjects;
-
-namespace EVM.ProjectManagement.Application.Projects.Extensions;
 
 public static class ProjectMappingExtensions
 {

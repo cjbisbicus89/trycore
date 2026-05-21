@@ -1,3 +1,5 @@
+namespace EVM.ProjectManagement.API.Middleware;
+
 using EVM.ProjectManagement.Application.Common.Exceptions;
 using EVM.ProjectManagement.Domain.Exceptions;
 using FluentValidation;
@@ -5,38 +7,36 @@ using Microsoft.AspNetCore.Mvc;
 using System.Net;
 using System.Text.Json;
 
-namespace EVM.ProjectManagement.API.Middleware;
-
 public sealed class GlobalExceptionMiddleware
 {
-    private readonly RequestDelegate _next;
-    private readonly ILogger<GlobalExceptionMiddleware> _logger;
+    private readonly RequestDelegate next;
+    private readonly ILogger<GlobalExceptionMiddleware> logger;
 
     public GlobalExceptionMiddleware(RequestDelegate next, ILogger<GlobalExceptionMiddleware> logger)
     {
-        _next = next;
-        _logger = logger;
+        this.next = next;
+        this.logger = logger;
     }
 
     public async Task InvokeAsync(HttpContext context)
     {
         try
         {
-            await _next(context);
+            await this.next(context);
         }
         catch (NotFoundException ex)
         {
-            _logger.LogWarning(ex, "Resource not found: {Message}", ex.Message);
+            this.logger.LogWarning(ex, "Resource not found: {Message}", ex.Message);
             await HandleExceptionAsync(context, HttpStatusCode.NotFound, ex.Message);
         }
         catch (DomainException ex)
         {
-            _logger.LogWarning(ex, "Domain exception: {Message}", ex.Message);
+            this.logger.LogWarning(ex, "Domain exception: {Message}", ex.Message);
             await HandleExceptionAsync(context, HttpStatusCode.BadRequest, ex.Message);
         }
         catch (ValidationException ex)
         {
-            _logger.LogWarning(ex, "Validation exception: {Message}", ex.Message);
+            this.logger.LogWarning(ex, "Validation exception: {Message}", ex.Message);
             var errors = ex.Errors
                 .GroupBy(e => e.PropertyName)
                 .ToDictionary(g => g.Key, g => g.Select(e => e.ErrorMessage).ToArray());
@@ -44,7 +44,7 @@ public sealed class GlobalExceptionMiddleware
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Unexpected error: {Message}", ex.Message);
+            this.logger.LogError(ex, "Unexpected error: {Message}", ex.Message);
             await HandleExceptionAsync(context, HttpStatusCode.InternalServerError, "An unexpected error occurred");
         }
     }
@@ -57,7 +57,7 @@ public sealed class GlobalExceptionMiddleware
         {
             Status = (int)statusCode,
             Title = statusCode.ToString(),
-            Detail = message
+            Detail = message,
         };
         await context.Response.WriteAsync(JsonSerializer.Serialize(response));
     }
@@ -70,7 +70,7 @@ public sealed class GlobalExceptionMiddleware
         {
             Status = (int)HttpStatusCode.BadRequest,
             Title = "Validation Error",
-            Errors = errors
+            Errors = errors,
         };
         await context.Response.WriteAsync(JsonSerializer.Serialize(response));
     }

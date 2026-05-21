@@ -1,18 +1,18 @@
+namespace EVM.ProjectManagement.API.Controllers;
+
 using EVM.ProjectManagement.Application.Projects;
 using EVM.ProjectManagement.Application.Projects.DTOs;
 using Microsoft.AspNetCore.Mvc;
-
-namespace EVM.ProjectManagement.API.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
 public sealed class ProjectsController : ControllerBase
 {
-    private readonly IProjectService _projectService;
+    private readonly IProjectService projectService;
 
     public ProjectsController(IProjectService projectService)
     {
-        _projectService = projectService;
+        this.projectService = projectService;
     }
 
     /// <summary>
@@ -22,8 +22,8 @@ public sealed class ProjectsController : ControllerBase
     [ProducesResponseType(typeof(IReadOnlyList<ProjectResponse>), StatusCodes.Status200OK)]
     public async Task<IActionResult> GetAll(CancellationToken cancellationToken)
     {
-        var projects = await _projectService.GetAllAsync(cancellationToken);
-        return Ok(projects);
+        var projects = await this.projectService.GetAllAsync(cancellationToken);
+        return this.Ok(projects);
     }
 
     /// <summary>
@@ -34,8 +34,8 @@ public sealed class ProjectsController : ControllerBase
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetById(Guid id, CancellationToken cancellationToken)
     {
-        var project = await _projectService.GetByIdAsync(id, cancellationToken);
-        return Ok(project);
+        var project = await this.projectService.GetByIdAsync(id, cancellationToken);
+        return this.Ok(project);
     }
 
     /// <summary>
@@ -46,8 +46,8 @@ public sealed class ProjectsController : ControllerBase
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> Create([FromBody] CreateProjectRequest request, CancellationToken cancellationToken)
     {
-        var project = await _projectService.CreateAsync(request, cancellationToken);
-        return CreatedAtAction(nameof(GetById), new { id = project.Id }, project);
+        var project = await this.projectService.CreateAsync(request, cancellationToken);
+        return this.CreatedAtAction(nameof(this.GetById), new { id = project.Id }, project);
     }
 
     /// <summary>
@@ -59,8 +59,8 @@ public sealed class ProjectsController : ControllerBase
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> Update(Guid id, [FromBody] UpdateProjectRequest request, CancellationToken cancellationToken)
     {
-        var project = await _projectService.UpdateAsync(id, request, cancellationToken);
-        return Ok(project);
+        var project = await this.projectService.UpdateAsync(id, request, cancellationToken);
+        return this.Ok(project);
     }
 
     /// <summary>
@@ -71,7 +71,7 @@ public sealed class ProjectsController : ControllerBase
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> Delete(Guid id, CancellationToken cancellationToken)
     {
-        await _projectService.DeleteAsync(id, cancellationToken);
-        return NoContent();
+        await this.projectService.DeleteAsync(id, cancellationToken);
+        return this.NoContent();
     }
 }

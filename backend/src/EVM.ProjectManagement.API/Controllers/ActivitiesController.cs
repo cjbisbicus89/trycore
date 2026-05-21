@@ -1,18 +1,18 @@
+namespace EVM.ProjectManagement.API.Controllers;
+
 using EVM.ProjectManagement.Application.Activities;
 using EVM.ProjectManagement.Application.Activities.DTOs;
 using Microsoft.AspNetCore.Mvc;
-
-namespace EVM.ProjectManagement.API.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
 public sealed class ActivitiesController : ControllerBase
 {
-    private readonly IActivityService _activityService;
+    private readonly IActivityService activityService;
 
     public ActivitiesController(IActivityService activityService)
     {
-        _activityService = activityService;
+        this.activityService = activityService;
     }
 
     /// <summary>
@@ -22,8 +22,8 @@ public sealed class ActivitiesController : ControllerBase
     [ProducesResponseType(typeof(IReadOnlyList<ActivityResponse>), StatusCodes.Status200OK)]
     public async Task<IActionResult> GetByProjectId(Guid projectId, CancellationToken cancellationToken)
     {
-        var activities = await _activityService.GetByProjectIdAsync(projectId, cancellationToken);
-        return Ok(activities);
+        var activities = await this.activityService.GetByProjectIdAsync(projectId, cancellationToken);
+        return this.Ok(activities);
     }
 
     /// <summary>
@@ -34,8 +34,8 @@ public sealed class ActivitiesController : ControllerBase
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetById(Guid id, CancellationToken cancellationToken)
     {
-        var activity = await _activityService.GetByIdAsync(id, cancellationToken);
-        return Ok(activity);
+        var activity = await this.activityService.GetByIdAsync(id, cancellationToken);
+        return this.Ok(activity);
     }
 
     /// <summary>
@@ -46,8 +46,8 @@ public sealed class ActivitiesController : ControllerBase
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> Create([FromBody] CreateActivityRequest request, CancellationToken cancellationToken)
     {
-        var activity = await _activityService.CreateAsync(request, cancellationToken);
-        return CreatedAtAction(nameof(GetById), new { id = activity.Id }, activity);
+        var activity = await this.activityService.CreateAsync(request, cancellationToken);
+        return this.CreatedAtAction(nameof(this.GetById), new { id = activity.Id }, activity);
     }
 
     /// <summary>
@@ -59,8 +59,8 @@ public sealed class ActivitiesController : ControllerBase
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> Update(Guid id, [FromBody] UpdateActivityRequest request, CancellationToken cancellationToken)
     {
-        var activity = await _activityService.UpdateAsync(id, request, cancellationToken);
-        return Ok(activity);
+        var activity = await this.activityService.UpdateAsync(id, request, cancellationToken);
+        return this.Ok(activity);
     }
 
     /// <summary>
@@ -71,7 +71,7 @@ public sealed class ActivitiesController : ControllerBase
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> Delete(Guid id, CancellationToken cancellationToken)
     {
-        await _activityService.DeleteAsync(id, cancellationToken);
-        return NoContent();
+        await this.activityService.DeleteAsync(id, cancellationToken);
+        return this.NoContent();
     }
 }

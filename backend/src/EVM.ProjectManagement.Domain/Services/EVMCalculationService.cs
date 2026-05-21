@@ -1,6 +1,6 @@
-using EVM.ProjectManagement.Domain.ValueObjects;
-
 namespace EVM.ProjectManagement.Domain.Services;
+
+using EVM.ProjectManagement.Domain.ValueObjects;
 
 public sealed class EVMCalculationService : IEVMCalculator
 {
@@ -24,7 +24,7 @@ public sealed class EVMCalculationService : IEVMCalculator
             > 1 => "Under Budget",
             < 1 => "Over Budget",
             1 => "On Budget",
-            _ => "N/A"
+            _ => "N/A",
         };
 
         // Interpretación del estado del cronograma
@@ -33,7 +33,7 @@ public sealed class EVMCalculationService : IEVMCalculator
             > 1 => "Ahead of Schedule",
             < 1 => "Behind Schedule",
             1 => "On Schedule",
-            _ => "N/A"
+            _ => "N/A",
         };
 
         return new EVMIndicators(

@@ -1,6 +1,6 @@
-using EVM.ProjectManagement.Domain.ValueObjects;
-
 namespace EVM.ProjectManagement.Domain.Services;
+
+using EVM.ProjectManagement.Domain.ValueObjects;
 
 public interface IEVMCalculator
 {

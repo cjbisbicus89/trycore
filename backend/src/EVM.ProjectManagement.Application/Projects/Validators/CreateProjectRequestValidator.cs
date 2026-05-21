@@ -7,11 +7,11 @@ public sealed class CreateProjectRequestValidator : AbstractValidator<CreateProj
 {
     public CreateProjectRequestValidator()
     {
-        RuleFor(x => x.Name)
+        this.RuleFor(x => x.Name)
             .NotEmpty()
             .MaximumLength(200);
 
-        RuleFor(x => x.Description)
+        this.RuleFor(x => x.Description)
             .NotEmpty()
             .MaximumLength(1000);
     }

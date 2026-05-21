@@ -1,8 +1,8 @@
+namespace EVM.ProjectManagement.Infrastructure.Persistence.Configurations;
+
 using EVM.ProjectManagement.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-
-namespace EVM.ProjectManagement.Infrastructure.Persistence.Configurations;
 
 public sealed class ProjectConfiguration : IEntityTypeConfiguration<Project>
 {

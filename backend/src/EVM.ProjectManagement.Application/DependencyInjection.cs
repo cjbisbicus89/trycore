@@ -1,9 +1,9 @@
+namespace EVM.ProjectManagement.Application;
+
 using EVM.ProjectManagement.Application.Activities;
 using EVM.ProjectManagement.Application.Projects;
 using FluentValidation;
 using Microsoft.Extensions.DependencyInjection;
-
-namespace EVM.ProjectManagement.Application;
 
 public static class DependencyInjection
 {

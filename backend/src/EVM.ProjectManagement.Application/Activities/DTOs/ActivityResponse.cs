@@ -1,6 +1,6 @@
-using EVM.ProjectManagement.Domain.ValueObjects;
-
 namespace EVM.ProjectManagement.Application.Activities.DTOs;
+
+using EVM.ProjectManagement.Domain.ValueObjects;
 
 public sealed record ActivityResponse(
     Guid Id,

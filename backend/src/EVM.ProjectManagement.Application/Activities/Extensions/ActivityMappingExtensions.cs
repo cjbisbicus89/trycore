@@ -1,9 +1,9 @@
+namespace EVM.ProjectManagement.Application.Activities.Extensions;
+
 using EVM.ProjectManagement.Application.Activities.DTOs;
 using EVM.ProjectManagement.Domain.Entities;
 using EVM.ProjectManagement.Domain.Services;
 using EVM.ProjectManagement.Domain.ValueObjects;
-
-namespace EVM.ProjectManagement.Application.Activities.Extensions;
 
 public static class ActivityMappingExtensions
 {
