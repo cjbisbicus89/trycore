@@ -16,8 +16,11 @@ public sealed class ActivitiesController : ControllerBase
     }
 
     /// <summary>
-    /// Obtener todas las actividades de un proyecto
+    /// Obtener todas las actividades de un proyecto.
     /// </summary>
+    /// <param name="projectId">ID del proyecto.</param>
+    /// <param name="cancellationToken">Token de cancelación.</param>
+    /// <returns>Lista de todas las actividades del proyecto.</returns>
     [HttpGet("project/{projectId}")]
     [ProducesResponseType(typeof(IReadOnlyList<ActivityResponse>), StatusCodes.Status200OK)]
     public async Task<IActionResult> GetByProjectId(Guid projectId, CancellationToken cancellationToken)
@@ -27,8 +30,11 @@ public sealed class ActivitiesController : ControllerBase
     }
 
     /// <summary>
-    /// Obtener una actividad por ID con sus indicadores EVM
+    /// Obtener una actividad por ID con sus indicadores EVM.
     /// </summary>
+    /// <param name="id">ID de la actividad.</param>
+    /// <param name="cancellationToken">Token de cancelación.</param>
+    /// <returns>La actividad solicitada con sus indicadores EVM.</returns>
     [HttpGet("{id}")]
     [ProducesResponseType(typeof(ActivityResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -39,8 +45,11 @@ public sealed class ActivitiesController : ControllerBase
     }
 
     /// <summary>
-    /// Crear una nueva actividad
+    /// Crear una nueva actividad.
     /// </summary>
+    /// <param name="request">Datos de la actividad a crear.</param>
+    /// <param name="cancellationToken">Token de cancelación.</param>
+    /// <returns>La actividad creada.</returns>
     [HttpPost]
     [ProducesResponseType(typeof(ActivityResponse), StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -51,8 +60,12 @@ public sealed class ActivitiesController : ControllerBase
     }
 
     /// <summary>
-    /// Actualizar una actividad existente
+    /// Actualizar una actividad existente.
     /// </summary>
+    /// <param name="id">ID de la actividad a actualizar.</param>
+    /// <param name="request">Datos actualizados de la actividad.</param>
+    /// <param name="cancellationToken">Token de cancelación.</param>
+    /// <returns>La actividad actualizada.</returns>
     [HttpPut("{id}")]
     [ProducesResponseType(typeof(ActivityResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -64,8 +77,11 @@ public sealed class ActivitiesController : ControllerBase
     }
 
     /// <summary>
-    /// Eliminar una actividad
+    /// Eliminar una actividad.
     /// </summary>
+    /// <param name="id">ID de la actividad a eliminar.</param>
+    /// <param name="cancellationToken">Token de cancelación.</param>
+    /// <returns>Resultado de la operación.</returns>
     [HttpDelete("{id}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]

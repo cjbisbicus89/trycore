@@ -16,8 +16,10 @@ public sealed class ProjectsController : ControllerBase
     }
 
     /// <summary>
-    /// Obtener todos los proyectos
+    /// Obtener todos los proyectos.
     /// </summary>
+    /// <param name="cancellationToken">Token de cancelación.</param>
+    /// <returns>Lista de todos los proyectos.</returns>
     [HttpGet]
     [ProducesResponseType(typeof(IReadOnlyList<ProjectResponse>), StatusCodes.Status200OK)]
     public async Task<IActionResult> GetAll(CancellationToken cancellationToken)
@@ -27,8 +29,11 @@ public sealed class ProjectsController : ControllerBase
     }
 
     /// <summary>
-    /// Obtener un proyecto por ID con sus actividades e indicadores consolidados
+    /// Obtener un proyecto por ID con sus actividades e indicadores consolidados.
     /// </summary>
+    /// <param name="id">ID del proyecto.</param>
+    /// <param name="cancellationToken">Token de cancelación.</param>
+    /// <returns>El proyecto solicitado con sus actividades e indicadores.</returns>
     [HttpGet("{id}")]
     [ProducesResponseType(typeof(ProjectResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -39,8 +44,11 @@ public sealed class ProjectsController : ControllerBase
     }
 
     /// <summary>
-    /// Crear un nuevo proyecto
+    /// Crear un nuevo proyecto.
     /// </summary>
+    /// <param name="request">Datos del proyecto a crear.</param>
+    /// <param name="cancellationToken">Token de cancelación.</param>
+    /// <returns>El proyecto creado.</returns>
     [HttpPost]
     [ProducesResponseType(typeof(ProjectResponse), StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -51,8 +59,12 @@ public sealed class ProjectsController : ControllerBase
     }
 
     /// <summary>
-    /// Actualizar un proyecto existente
+    /// Actualizar un proyecto existente.
     /// </summary>
+    /// <param name="id">ID del proyecto a actualizar.</param>
+    /// <param name="request">Datos actualizados del proyecto.</param>
+    /// <param name="cancellationToken">Token de cancelación.</param>
+    /// <returns>El proyecto actualizado.</returns>
     [HttpPut("{id}")]
     [ProducesResponseType(typeof(ProjectResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -64,8 +76,11 @@ public sealed class ProjectsController : ControllerBase
     }
 
     /// <summary>
-    /// Eliminar un proyecto
+    /// Eliminar un proyecto.
     /// </summary>
+    /// <param name="id">ID del proyecto a eliminar.</param>
+    /// <param name="cancellationToken">Token de cancelación.</param>
+    /// <returns>Resultado de la operación.</returns>
     [HttpDelete("{id}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]

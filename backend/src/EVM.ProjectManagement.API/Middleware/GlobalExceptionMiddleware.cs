@@ -1,11 +1,13 @@
 namespace EVM.ProjectManagement.API.Middleware;
 
+using System.Net;
+using System.Text.Json;
 using EVM.ProjectManagement.Application.Common.Exceptions;
 using EVM.ProjectManagement.Domain.Exceptions;
 using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
-using System.Net;
-using System.Text.Json;
+
+#pragma warning disable CA1848 // Use LoggerMessage delegates for performance
 
 public sealed class GlobalExceptionMiddleware
 {
@@ -75,3 +77,5 @@ public sealed class GlobalExceptionMiddleware
         await context.Response.WriteAsync(JsonSerializer.Serialize(response));
     }
 }
+
+#pragma warning restore CA1848
