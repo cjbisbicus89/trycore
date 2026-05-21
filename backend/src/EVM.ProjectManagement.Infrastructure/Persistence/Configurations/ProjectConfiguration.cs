@@ -19,7 +19,13 @@ public sealed class ProjectConfiguration : IEntityTypeConfiguration<Project>
             .HasMaxLength(1000);
 
         builder.Property(p => p.CreatedAt)
-            .IsRequired();
+            .IsRequired()
+            .HasDefaultValueSql("NOW()");
+
+        // Índice para ordenamiento por fecha de creación
+        builder.HasIndex(p => p.CreatedAt)
+            .IsDescending()
+            .HasDatabaseName("IX_Projects_CreatedAt");
 
         // Relación 1:N con Activity
         builder.HasMany(p => p.Activities)

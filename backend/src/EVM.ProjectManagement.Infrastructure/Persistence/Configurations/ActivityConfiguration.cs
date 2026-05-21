@@ -33,6 +33,10 @@ public sealed class ActivityConfiguration : IEntityTypeConfiguration<Activity>
             .IsRequired()
             .HasPrecision(18, 2);
 
+        // Índice para consultas por ProjectId (dashboard carga actividades por proyecto)
+        builder.HasIndex(a => a.ProjectId)
+            .HasDatabaseName("IX_Activities_ProjectId");
+
         // Ignorar propiedades calculadas
         builder.Ignore(a => a.PlannedValue);
         builder.Ignore(a => a.EarnedValue);
