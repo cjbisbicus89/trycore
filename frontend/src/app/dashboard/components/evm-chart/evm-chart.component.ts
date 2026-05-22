@@ -49,27 +49,27 @@ export class EvmChartComponent implements OnChanges {
 
   private updateChartData(): void {
     const activities = this.activities();
-    
+
     this.chartData = {
       labels: activities.map(a => a.name),
       datasets: [
         {
           label: 'PV (Planned Value)',
-          data: activities.map(a => a.evmIndicators.pv || 0),
+          data: activities.map(a => a.indicators.plannedValue),
           backgroundColor: '#3B82F6',
           borderColor: '#3B82F6',
           borderWidth: 1
         },
         {
           label: 'EV (Earned Value)',
-          data: activities.map(a => a.evmIndicators.ev || 0),
+          data: activities.map(a => a.indicators.earnedValue),
           backgroundColor: '#10B981',
           borderColor: '#10B981',
           borderWidth: 1
         },
         {
           label: 'AC (Actual Cost)',
-          data: activities.map(a => a.evmIndicators.ac || 0),
+          data: activities.map(a => a.indicators.actualCost),
           backgroundColor: '#F59E0B',
           borderColor: '#F59E0B',
           borderWidth: 1

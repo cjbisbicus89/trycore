@@ -22,35 +22,35 @@
     <div class="indicators-grid">
       <div class="indicator-card">
         <div class="indicator-label">PV (Planned Value)</div>
-        <div class="indicator-value">\${{ project()!.evmIndicators.pv?.toFixed(2) || 'N/A' }}</div>
+        <div class="indicator-value">\${{ project()!.indicators?.plannedValue?.toFixed(2) || 'N/A' }}</div>
       </div>
       <div class="indicator-card">
         <div class="indicator-label">EV (Earned Value)</div>
-        <div class="indicator-value">\${{ project()!.evmIndicators.ev?.toFixed(2) || 'N/A' }}</div>
+        <div class="indicator-value">\${{ project()!.indicators?.earnedValue?.toFixed(2) || 'N/A' }}</div>
       </div>
       <div class="indicator-card">
         <div class="indicator-label">AC (Actual Cost)</div>
-        <div class="indicator-value">\${{ project()!.evmIndicators.ac?.toFixed(2) || 'N/A' }}</div>
+        <div class="indicator-value">\${{ project()!.indicators?.actualCost?.toFixed(2) || 'N/A' }}</div>
       </div>
       <div class="indicator-card">
         <div class="indicator-label">CV (Cost Variance)</div>
-        <div class="indicator-value">\${{ project()!.evmIndicators.cv?.toFixed(2) || 'N/A' }}</div>
+        <div class="indicator-value">\${{ project()!.indicators?.costVariance?.toFixed(2) || 'N/A' }}</div>
       </div>
       <div class="indicator-card">
         <div class="indicator-label">SV (Schedule Variance)</div>
-        <div class="indicator-value">\${{ project()!.evmIndicators.sv?.toFixed(2) || 'N/A' }}</div>
+        <div class="indicator-value">\${{ project()!.indicators?.scheduleVariance?.toFixed(2) || 'N/A' }}</div>
       </div>
       <div class="indicator-card">
         <div class="indicator-label">CPI (Cost Performance Index)</div>
-        <div class="indicator-value">{{ project()!.evmIndicators.cpi?.toFixed(2) || 'N/A' }}</div>
+        <div class="indicator-value">{{ project()!.indicators?.costPerformanceIndex?.toFixed(2) || 'N/A' }}</div>
       </div>
       <div class="indicator-card">
         <div class="indicator-label">SPI (Schedule Performance Index)</div>
-        <div class="indicator-value">{{ project()!.evmIndicators.spi?.toFixed(2) || 'N/A' }}</div>
+        <div class="indicator-value">{{ project()!.indicators?.schedulePerformanceIndex?.toFixed(2) || 'N/A' }}</div>
       </div>
       <div class="indicator-card">
-        <div class="indicator-label">Estado</div>
-        <div class="indicator-value">{{ project()!.evmIndicators.status || 'N/A' }}</div>
+        <div class="indicator-label">Estado Costo</div>
+        <div class="indicator-value">{{ project()!.indicators?.costStatus || 'N/A' }}</div>
       </div>
     </div>
 

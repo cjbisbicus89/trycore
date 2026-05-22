@@ -1,4 +1,10 @@
 <div [class]="cardClasses()">
   <div class="label">{{ label() }}</div>
   <div class="value">{{ formattedValue() }}</div>
+  @if (subtitle()) {
+    <div class="subtitle">{{ subtitle() }}</div>
+  }
+  @if (status()) {
+    <app-status-badge [status]="status()" />
+  }
 </div>

@@ -1,4 +1,4 @@
-import { Component, input, computed } from '@angular/core';
+import { Component, input, output, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { StatusBadgeComponent } from '../../../shared/components/status-badge/status-badge.component';
 import { FormatDecimalPipe } from '../../../shared/pipes/format-decimal/format-decimal.pipe';
@@ -37,22 +37,40 @@ import type { Activity } from '../../../core/models';
     .row-neutral {
       @apply hover:bg-slate-50;
     }
+    .btn-edit {
+      @apply px-2 py-1 text-xs bg-blue-600 text-white hover:bg-blue-700 rounded transition-colors mr-1;
+    }
+    .btn-delete {
+      @apply px-2 py-1 text-xs text-red-600 hover:text-red-700 hover:bg-red-50 rounded transition-colors;
+    }
   `]
 })
 export class ActivityTableComponent {
   activities = input.required<Activity[]>();
+  edit = output<Activity>();
+  delete = output<string>();
 
   getRowClasses(activity: Activity): string {
-    const status = activity.evmIndicators.status?.toLowerCase();
-    if (status === 'healthy' || status === 'on track') {
-      return 'row-healthy';
-    }
-    if (status === 'warning' || status === 'at risk') {
+    const cpi = activity.indicators.costPerformanceIndex;
+    const spi = activity.indicators.schedulePerformanceIndex;
+    
+    if (cpi !== null && spi !== null) {
+      if (cpi < 1 || spi < 1) {
+        return 'row-danger';
+      }
+      if (cpi > 1 && spi > 1) {
+        return 'row-healthy';
+      }
       return 'row-warning';
     }
-    if (status === 'danger' || status === 'off track') {
-      return 'row-danger';
-    }
     return 'row-neutral';
+  }
+
+  onEdit(activity: Activity): void {
+    this.edit.emit(activity);
+  }
+
+  onDelete(activityId: string): void {
+    this.delete.emit(activityId);
   }
 }

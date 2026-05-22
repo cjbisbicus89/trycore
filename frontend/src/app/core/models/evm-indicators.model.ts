@@ -1,10 +1,13 @@
 export interface EvmIndicators {
-  pv: number | null;
-  ev: number | null;
-  ac: number | null;
-  cv: number | null;
-  sv: number | null;
-  cpi: number | null;
-  spi: number | null;
-  status: string | null;
+  plannedValue: number;
+  earnedValue: number;
+  actualCost: number;
+  costVariance: number;
+  scheduleVariance: number;
+  costPerformanceIndex: number | null;
+  schedulePerformanceIndex: number | null;
+  estimateAtCompletion: number | null;
+  varianceAtCompletion: number | null;
+  costStatus: string;
+  scheduleStatus: string;
 }

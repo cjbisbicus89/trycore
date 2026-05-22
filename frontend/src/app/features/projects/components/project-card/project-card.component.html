@@ -1,13 +1,15 @@
 <div class="card" (click)="navigateToDashboard()">
   <div class="card-header">
     <h3 class="project-name">{{ project().name }}</h3>
-    <app-status-badge [status]="project().evmIndicators.status || 'N/A'" />
+    @if (project().indicators) {
+      <app-status-badge [status]="project().indicators.costStatus || 'N/A'" />
+    }
   </div>
   <p class="description">{{ project().description }}</p>
   <div class="metrics">
     <div class="metric">
-      <span class="metric-label">Presupuesto:</span>
-      <span class="metric-value">\${{ project().budget.toLocaleString() }}</span>
+      <span class="metric-label">Creado:</span>
+      <span class="metric-value">{{ formattedDate() }}</span>
     </div>
     <div class="metric">
       <span class="metric-label">Actividades:</span>
@@ -15,6 +17,7 @@
     </div>
   </div>
   <div class="actions">
+    <button class="btn-view" (click)="navigateToDashboard()">Ver Dashboard</button>
     <button class="btn-delete" (click)="deleteProject($event)">Eliminar</button>
   </div>
 </div>
