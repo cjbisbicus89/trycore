@@ -1,50 +1,138 @@
 @if (isOpen()) {
-  <div class="modal-overlay" (click)="cancel()">
-    <div class="modal-content" (click)="$event.stopPropagation()">
-      <div class="modal-header">
-        <h2 class="modal-title">{{ isEditMode() ? 'Editar Actividad' : 'Nueva Actividad' }}</h2>
-        <button class="btn-close" (click)="cancel()">✕</button>
+  <div class="fixed inset-0 bg-trycore-navy/60 backdrop-blur-sm z-50 flex items-center justify-center p-4" 
+       (click)="cancel()" 
+       (keydown.escape)="cancel()" 
+       role="presentation">
+    <div class="bg-white rounded-2xl shadow-2xl w-full max-w-lg" 
+         (click)="$event.stopPropagation()" 
+         (keydown)="$event.stopPropagation()" 
+         role="dialog" 
+         aria-modal="true">
+      <div class="bg-trycore-navy text-white px-6 py-4 rounded-t-2xl flex items-center justify-between">
+        <h2 class="font-semibold text-base">
+          {{ isEditMode() ? 'Editar actividad' : 'Nueva actividad' }}
+        </h2>
+        <button (click)="cancel()" class="text-white/60 hover:text-white transition-colors">
+          ✕
+        </button>
       </div>
-      <form [formGroup]="activityForm" (ngSubmit)="save()">
-        <div class="form-group">
-          <label for="name">Nombre</label>
-          <input id="name" type="text" formControlName="name" placeholder="Nombre de la actividad" />
-          @if (activityForm.get('name')?.invalid && activityForm.get('name')?.touched) {
-            <span class="error">El nombre es requerido (máx 200 caracteres)</span>
+
+      <form [formGroup]="activityForm" (ngSubmit)="save()" class="px-6 py-5 flex flex-col gap-4">
+        <div>
+          <label for="name" class="text-xs font-medium text-slate-500 uppercase tracking-wider block mb-1">
+            Nombre
+          </label>
+          <input
+            id="name"
+            type="text"
+            formControlName="name"
+            class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm text-trycore-navy
+                   focus:outline-none focus:ring-2 focus:ring-trycore-orange/30 focus:border-trycore-orange
+                   transition-all"
+            placeholder="Nombre de la actividad"
+          />
+          @if (activityForm.get('name')?.hasError('required') && activityForm.get('name')?.touched) {
+            <p class="text-red-500 text-xs mt-1">{{ ValidationMessages.NameRequired }}</p>
+          }
+          @if (activityForm.get('name')?.hasError('maxlength') && activityForm.get('name')?.touched) {
+            <p class="text-red-500 text-xs mt-1">{{ ValidationMessages.NameTooLong }}</p>
           }
         </div>
-        <div class="form-group">
-          <label for="budgetedCost">Costo Presupuestado</label>
-          <input id="budgetedCost" type="number" formControlName="budgetedCost" placeholder="0.00" step="0.01" />
-          @if (activityForm.get('budgetedCost')?.invalid && activityForm.get('budgetedCost')?.touched) {
-            <span class="error">El costo debe ser mayor a 0</span>
+
+        <div>
+          <label for="budgetedCost" class="text-xs font-medium text-slate-500 uppercase tracking-wider block mb-1">
+            Costo Presupuestado
+          </label>
+          <input
+            id="budgetedCost"
+            type="number"
+            formControlName="budgetedCost"
+            class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm text-trycore-navy
+                   focus:outline-none focus:ring-2 focus:ring-trycore-orange/30 focus:border-trycore-orange
+                   transition-all"
+            placeholder="0.00"
+            step="0.01"
+          />
+          @if (activityForm.get('budgetedCost')?.hasError('required') && activityForm.get('budgetedCost')?.touched) {
+            <p class="text-red-500 text-xs mt-1">{{ ValidationMessages.BudgetedCostInvalid }}</p>
           }
         </div>
-        <div class="form-group">
-          <label for="plannedPercentage">% Planificado</label>
-          <input id="plannedPercentage" type="number" formControlName="plannedPercentage" placeholder="0" min="0" max="100" />
-          @if (activityForm.get('plannedPercentage')?.invalid && activityForm.get('plannedPercentage')?.touched) {
-            <span class="error">Debe estar entre 0 y 100</span>
+
+        <div>
+          <label for="plannedPercentage" class="text-xs font-medium text-slate-500 uppercase tracking-wider block mb-1">
+            % Planificado
+          </label>
+          <input
+            id="plannedPercentage"
+            type="number"
+            formControlName="plannedPercentage"
+            class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm text-trycore-navy
+                   focus:outline-none focus:ring-2 focus:ring-trycore-orange/30 focus:border-trycore-orange
+                   transition-all"
+            placeholder="0"
+            min="0"
+            max="100"
+          />
+          @if (activityForm.get('plannedPercentage')?.hasError('required') && activityForm.get('plannedPercentage')?.touched) {
+            <p class="text-red-500 text-xs mt-1">{{ ValidationMessages.PlannedPercentageRange }}</p>
           }
         </div>
-        <div class="form-group">
-          <label for="actualPercentage">% Actual</label>
-          <input id="actualPercentage" type="number" formControlName="actualPercentage" placeholder="0" min="0" max="100" />
-          @if (activityForm.get('actualPercentage')?.invalid && activityForm.get('actualPercentage')?.touched) {
-            <span class="error">Debe estar entre 0 y 100</span>
+
+        <div>
+          <label for="actualPercentage" class="text-xs font-medium text-slate-500 uppercase tracking-wider block mb-1">
+            % Actual
+          </label>
+          <input
+            id="actualPercentage"
+            type="number"
+            formControlName="actualPercentage"
+            class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm text-trycore-navy
+                   focus:outline-none focus:ring-2 focus:ring-trycore-orange/30 focus:border-trycore-orange
+                   transition-all"
+            placeholder="0"
+            min="0"
+            max="100"
+          />
+          @if (activityForm.get('actualPercentage')?.hasError('required') && activityForm.get('actualPercentage')?.touched) {
+            <p class="text-red-500 text-xs mt-1">{{ ValidationMessages.ActualPercentageRange }}</p>
           }
         </div>
-        <div class="form-group">
-          <label for="actualCost">Costo Real</label>
-          <input id="actualCost" type="number" formControlName="actualCost" placeholder="0.00" step="0.01" />
-          @if (activityForm.get('actualCost')?.invalid && activityForm.get('actualCost')?.touched) {
-            <span class="error">El costo debe ser mayor o igual a 0</span>
+
+        <div>
+          <label for="actualCost" class="text-xs font-medium text-slate-500 uppercase tracking-wider block mb-1">
+            Costo Real
+          </label>
+          <input
+            id="actualCost"
+            type="number"
+            formControlName="actualCost"
+            class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm text-trycore-navy
+                   focus:outline-none focus:ring-2 focus:ring-trycore-orange/30 focus:border-trycore-orange
+                   transition-all"
+            placeholder="0.00"
+            step="0.01"
+          />
+          @if (activityForm.get('actualCost')?.hasError('required') && activityForm.get('actualCost')?.touched) {
+            <p class="text-red-500 text-xs mt-1">{{ ValidationMessages.ActualCostInvalid }}</p>
           }
         </div>
-        <div class="form-actions">
-          <button type="button" class="btn-secondary" (click)="cancel()" [disabled]="isSaving()">Cancelar</button>
-          <button type="submit" class="btn-primary" [disabled]="isSaving() || activityForm.invalid">
-            {{ isSaving() ? 'Guardando...' : (isEditMode() ? 'Actualizar' : 'Crear') }}
+
+        <div class="px-6 py-4 border-t border-slate-100 flex justify-end gap-3 -mx-6 -mb-5 mt-0">
+          <button
+            type="button"
+            (click)="cancel()"
+            [disabled]="isSaving()"
+            class="border border-slate-200 text-slate-600 text-sm font-medium px-4 py-2 rounded-lg hover:bg-slate-50 transition-colors"
+          >
+            Cancelar
+          </button>
+          <button
+            type="submit"
+            [disabled]="isSaving() || activityForm.invalid"
+            class="bg-trycore-orange hover:bg-trycore-orange-light disabled:opacity-50 disabled:cursor-not-allowed
+                   text-white text-sm font-medium px-4 py-2 rounded-lg transition-colors"
+          >
+            {{ isSaving() ? 'Guardando...' : (isEditMode() ? 'Actualizar' : 'Guardar') }}
           </button>
         </div>
       </form>

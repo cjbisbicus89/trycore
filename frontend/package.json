@@ -7,11 +7,14 @@
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
+    "lint": "ng lint",
+    "lint:fix": "ng lint --fix",
     "serve:ssr:frontend": "node dist/frontend/server/server.mjs"
   },
   "private": true,
   "packageManager": "npm@10.9.4",
   "dependencies": {
+    "@angular/animations": "^21.2.14",
     "@angular/common": "^21.2.0",
     "@angular/compiler": "^21.2.0",
     "@angular/core": "^21.2.0",
@@ -24,19 +27,26 @@
     "express": "^5.1.0",
     "ng2-charts": "^10.0.0",
     "rxjs": "~7.8.0",
+    "tailwindcss": "^3.4.19",
     "tslib": "^2.3.0"
   },
   "devDependencies": {
+    "@angular-eslint/builder": "21.4.0",
+    "@angular-eslint/eslint-plugin": "21.4.0",
+    "@angular-eslint/eslint-plugin-template": "21.4.0",
+    "@angular-eslint/schematics": "21.4.0",
+    "@angular-eslint/template-parser": "21.4.0",
     "@angular/build": "^21.2.12",
     "@angular/cli": "^21.2.12",
     "@angular/compiler-cli": "^21.2.0",
+    "@eslint/js": "^10.0.1",
     "@types/express": "^5.0.1",
     "@types/node": "^20.17.19",
+    "angular-eslint": "^21.4.0",
     "autoprefixer": "^10.5.0",
     "jsdom": "^28.0.0",
     "postcss": "^8.5.15",
     "prettier": "^3.8.1",
-    "tailwindcss": "^4.3.0",
     "typescript": "~5.9.2",
     "vitest": "^4.0.8"
   }

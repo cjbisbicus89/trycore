@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
@@ -25,9 +25,8 @@ export interface UpdateActivityRequest {
   providedIn: 'root'
 })
 export class ActivityService {
+  private readonly http = inject(HttpClient);
   private readonly apiUrl = `${environment.apiUrl}/activities`;
-
-  constructor(private readonly http: HttpClient) {}
 
   getByProjectId(projectId: string): Observable<Activity[]> {
     return this.http.get<Activity[]>(`${this.apiUrl}/project/${projectId}`);
