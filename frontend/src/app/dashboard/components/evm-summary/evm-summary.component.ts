@@ -7,50 +7,7 @@ import type { EvmIndicators } from '../../../core/models';
   selector: 'app-evm-summary',
   standalone: true,
   imports: [CommonModule, IndicatorCardComponent],
-  template: `
-    <div class="summary-grid">
-      <app-indicator-card
-        label="PV (Planned Value)"
-        [value]="evmIndicators().pv"
-        [status]="getPvStatus()"
-      />
-      <app-indicator-card
-        label="EV (Earned Value)"
-        [value]="evmIndicators().ev"
-        [status]="getEvStatus()"
-      />
-      <app-indicator-card
-        label="AC (Actual Cost)"
-        [value]="evmIndicators().ac"
-        [status]="getAcStatus()"
-      />
-      <app-indicator-card
-        label="CV (Cost Variance)"
-        [value]="evmIndicators().cv"
-        [status]="getCvStatus()"
-      />
-      <app-indicator-card
-        label="SV (Schedule Variance)"
-        [value]="evmIndicators().sv"
-        [status]="getSvStatus()"
-      />
-      <app-indicator-card
-        label="CPI (Cost Performance Index)"
-        [value]="evmIndicators().cpi"
-        [status]="getCpiStatus()"
-      />
-      <app-indicator-card
-        label="SPI (Schedule Performance Index)"
-        [value]="evmIndicators().spi"
-        [status]="getSpiStatus()"
-      />
-      <app-indicator-card
-        label="Estado"
-        [value]="evmIndicators().status"
-        [status]="getOverallStatus()"
-      />
-    </div>
-  `,
+  templateUrl: './evm-summary.component.html',
   styles: [`
     .summary-grid {
       @apply grid grid-cols-2 md:grid-cols-4 gap-4;

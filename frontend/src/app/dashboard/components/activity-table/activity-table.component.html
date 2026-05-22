@@ -1,0 +1,32 @@
+<div class="table-container">
+  <table class="table">
+    <thead>
+      <tr>
+        <th>Actividad</th>
+        <th>Costo Presupuestado</th>
+        <th>% Planificado</th>
+        <th>% Actual</th>
+        <th>Costo Real</th>
+        <th>CPI</th>
+        <th>SPI</th>
+        <th>Estado</th>
+      </tr>
+    </thead>
+    <tbody>
+      @for (activity of activities(); track activity.id) {
+        <tr [class]="getRowClasses(activity)">
+          <td class="activity-name">{{ activity.name }}</td>
+          <td>\${{ activity.budgetedCost | formatDecimal }}</td>
+          <td>{{ activity.plannedPercentage }}%</td>
+          <td>{{ activity.actualPercentage }}%</td>
+          <td>\${{ activity.actualCost | formatDecimal }}</td>
+          <td>{{ activity.evmIndicators.cpi | formatDecimal }}</td>
+          <td>{{ activity.evmIndicators.spi | formatDecimal }}</td>
+          <td>
+            <app-status-badge [status]="activity.evmIndicators.status || 'N/A'" />
+          </td>
+        </tr>
+      }
+    </tbody>
+  </table>
+</div>

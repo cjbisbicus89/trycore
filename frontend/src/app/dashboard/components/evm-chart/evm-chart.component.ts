@@ -8,11 +8,7 @@ import type { Activity } from '../../../core/models';
   selector: 'app-evm-chart',
   standalone: true,
   imports: [CommonModule, BaseChartDirective],
-  template: `
-    <div class="chart-container">
-      <canvas baseChart [type]="chartType" [data]="chartData" [options]="chartOptions"></canvas>
-    </div>
-  `,
+  templateUrl: './evm-chart.component.html',
   styles: [`
     .chart-container {
       @apply bg-white shadow-sm border border-slate-100 rounded-lg p-6;

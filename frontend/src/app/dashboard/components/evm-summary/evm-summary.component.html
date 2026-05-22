@@ -1,0 +1,42 @@
+<div class="summary-grid">
+  <app-indicator-card
+    label="PV (Planned Value)"
+    [value]="evmIndicators().pv"
+    [status]="getPvStatus()"
+  />
+  <app-indicator-card
+    label="EV (Earned Value)"
+    [value]="evmIndicators().ev"
+    [status]="getEvStatus()"
+  />
+  <app-indicator-card
+    label="AC (Actual Cost)"
+    [value]="evmIndicators().ac"
+    [status]="getAcStatus()"
+  />
+  <app-indicator-card
+    label="CV (Cost Variance)"
+    [value]="evmIndicators().cv"
+    [status]="getCvStatus()"
+  />
+  <app-indicator-card
+    label="SV (Schedule Variance)"
+    [value]="evmIndicators().sv"
+    [status]="getSvStatus()"
+  />
+  <app-indicator-card
+    label="CPI (Cost Performance Index)"
+    [value]="evmIndicators().cpi"
+    [status]="getCpiStatus()"
+  />
+  <app-indicator-card
+    label="SPI (Schedule Performance Index)"
+    [value]="evmIndicators().spi"
+    [status]="getSpiStatus()"
+  />
+  <app-indicator-card
+    label="Estado"
+    [value]="evmIndicators().status"
+    [status]="getOverallStatus()"
+  />
+</div>

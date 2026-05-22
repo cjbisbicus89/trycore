@@ -1,4 +1,5 @@
-import { Component, signal, computed, inject } from '@angular/core';
+import { Component, signal, computed, inject, DestroyRef } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
 import { ProjectService, CreateProjectRequest } from '../../../../core/services/project.service';
@@ -9,65 +10,7 @@ import type { Project } from '../../../../core/models';
   selector: 'app-project-list',
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule, ProjectCardComponent],
-  template: `
-    <div class="container">
-      <div class="header">
-        <h1 class="title">Proyectos</h1>
-        <button class="btn-primary" (click)="showCreateForm.set(true)">Nuevo Proyecto</button>
-      </div>
-
-      @if (showCreateForm()) {
-        <div class="form-container">
-          <h2 class="form-title">Crear Nuevo Proyecto</h2>
-          <form [formGroup]="projectForm" (ngSubmit)="createProject()">
-            <div class="form-group">
-              <label for="name">Nombre</label>
-              <input id="name" type="text" formControlName="name" placeholder="Nombre del proyecto" />
-              @if (projectForm.get('name')?.invalid && projectForm.get('name')?.touched) {
-                <span class="error">El nombre es requerido</span>
-              }
-            </div>
-            <div class="form-group">
-              <label for="description">Descripción</label>
-              <textarea id="description" formControlName="description" placeholder="Descripción del proyecto"></textarea>
-              @if (projectForm.get('description')?.invalid && projectForm.get('description')?.touched) {
-                <span class="error">La descripción es requerida</span>
-              }
-            </div>
-            <div class="form-group">
-              <label for="budget">Presupuesto</label>
-              <input id="budget" type="number" formControlName="budget" placeholder="0.00" step="0.01" />
-              @if (projectForm.get('budget')?.invalid && projectForm.get('budget')?.touched) {
-                <span class="error">El presupuesto debe ser mayor a 0</span>
-              }
-            </div>
-            <div class="form-actions">
-              <button type="button" class="btn-secondary" (click)="showCreateForm.set(false)">Cancelar</button>
-              <button type="submit" class="btn-primary" [disabled]="isCreating()">Crear</button>
-            </div>
-          </form>
-        </div>
-      }
-
-      @if (isLoading()) {
-        <div class="loading">
-          <div class="skeleton"></div>
-          <div class="skeleton"></div>
-          <div class="skeleton"></div>
-        </div>
-      } @else if (projects().length === 0) {
-        <div class="empty-state">
-          <p>No hay proyectos. Crea uno nuevo para comenzar.</p>
-        </div>
-      } @else {
-        <div class="projects-grid">
-          @for (project of projects(); track project.id) {
-            <app-project-card [project]="project" (delete)="deleteProject($event)" />
-          }
-        </div>
-      }
-    </div>
-  `,
+  templateUrl: './project-list.component.html',
   styles: [`
     .container {
       @apply max-w-7xl mx-auto p-6;
@@ -126,6 +69,7 @@ import type { Project } from '../../../../core/models';
 export class ProjectListComponent {
   private readonly projectService = inject(ProjectService);
   private readonly fb = inject(FormBuilder);
+  private readonly destroyRef = inject(DestroyRef);
 
   projects = signal<Project[]>([]);
   isLoading = signal(true);
@@ -144,7 +88,7 @@ export class ProjectListComponent {
 
   loadProjects(): void {
     this.isLoading.set(true);
-    this.projectService.getAll().subscribe({
+    this.projectService.getAll().pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: (projects) => {
         this.projects.set(projects);
         this.isLoading.set(false);
@@ -163,7 +107,7 @@ export class ProjectListComponent {
     this.isCreating.set(true);
     const request: CreateProjectRequest = this.projectForm.value as CreateProjectRequest;
 
-    this.projectService.create(request).subscribe({
+    this.projectService.create(request).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: (project) => {
         this.projects.update((projects) => [...projects, project]);
         this.projectForm.reset();

@@ -8,28 +8,7 @@ import type { Project } from '../../../../core/models';
   selector: 'app-project-card',
   standalone: true,
   imports: [CommonModule, StatusBadgeComponent],
-  template: `
-    <div class="card" (click)="navigateToDashboard()">
-      <div class="card-header">
-        <h3 class="project-name">{{ project().name }}</h3>
-        <app-status-badge [status]="project().evmIndicators.status || 'N/A'" />
-      </div>
-      <p class="description">{{ project().description }}</p>
-      <div class="metrics">
-        <div class="metric">
-          <span class="metric-label">Presupuesto:</span>
-          <span class="metric-value">\${{ project().budget.toLocaleString() }}</span>
-        </div>
-        <div class="metric">
-          <span class="metric-label">Actividades:</span>
-          <span class="metric-value">{{ project().activities.length }}</span>
-        </div>
-      </div>
-      <div class="actions">
-        <button class="btn-delete" (click)="deleteProject($event)">Eliminar</button>
-      </div>
-    </div>
-  `,
+  templateUrl: './project-card.component.html',
   styles: [`
     .card {
       @apply bg-white shadow-sm border border-slate-100 rounded-lg p-6 cursor-pointer hover:shadow-lg hover:border-blue-200 transition-all duration-200;

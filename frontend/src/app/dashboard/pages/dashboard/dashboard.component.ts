@@ -1,4 +1,5 @@
-import { Component, signal, computed, inject, OnInit } from '@angular/core';
+import { Component, signal, computed, inject, OnInit, DestroyRef } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ProjectService } from '../../../core/services/project.service';
@@ -10,70 +11,7 @@ import type { Project, Activity } from '../../../core/models';
   selector: 'app-dashboard',
   standalone: true,
   imports: [CommonModule, ActivityTableComponent],
-  template: `
-    <div class="container">
-      @if (isLoading()) {
-        <div class="loading">
-          <div class="skeleton-header"></div>
-          <div class="skeleton-cards"></div>
-          <div class="skeleton-table"></div>
-        </div>
-      } @else if (error()) {
-        <div class="error-state">
-          <p>{{ error() }}</p>
-          <button class="btn-back" (click)="goBack()">Volver</button>
-        </div>
-      } @else if (project()) {
-        <div class="header">
-          <button class="btn-back" (click)="goBack()">← Volver</button>
-          <div class="header-content">
-            <h1 class="project-name">{{ project()!.name }}</h1>
-            <p class="project-description">{{ project()!.description }}</p>
-          </div>
-        </div>
-
-        <div class="indicators-grid">
-          <div class="indicator-card">
-            <div class="indicator-label">PV (Planned Value)</div>
-            <div class="indicator-value">\${{ project()!.evmIndicators.pv?.toFixed(2) || 'N/A' }}</div>
-          </div>
-          <div class="indicator-card">
-            <div class="indicator-label">EV (Earned Value)</div>
-            <div class="indicator-value">\${{ project()!.evmIndicators.ev?.toFixed(2) || 'N/A' }}</div>
-          </div>
-          <div class="indicator-card">
-            <div class="indicator-label">AC (Actual Cost)</div>
-            <div class="indicator-value">\${{ project()!.evmIndicators.ac?.toFixed(2) || 'N/A' }}</div>
-          </div>
-          <div class="indicator-card">
-            <div class="indicator-label">CV (Cost Variance)</div>
-            <div class="indicator-value">\${{ project()!.evmIndicators.cv?.toFixed(2) || 'N/A' }}</div>
-          </div>
-          <div class="indicator-card">
-            <div class="indicator-label">SV (Schedule Variance)</div>
-            <div class="indicator-value">\${{ project()!.evmIndicators.sv?.toFixed(2) || 'N/A' }}</div>
-          </div>
-          <div class="indicator-card">
-            <div class="indicator-label">CPI (Cost Performance Index)</div>
-            <div class="indicator-value">{{ project()!.evmIndicators.cpi?.toFixed(2) || 'N/A' }}</div>
-          </div>
-          <div class="indicator-card">
-            <div class="indicator-label">SPI (Schedule Performance Index)</div>
-            <div class="indicator-value">{{ project()!.evmIndicators.spi?.toFixed(2) || 'N/A' }}</div>
-          </div>
-          <div class="indicator-card">
-            <div class="indicator-label">Estado</div>
-            <div class="indicator-value">{{ project()!.evmIndicators.status || 'N/A' }}</div>
-          </div>
-        </div>
-
-        <div class="activities-section">
-          <h2 class="section-title">Actividades</h2>
-          <app-activity-table [activities]="activities()" />
-        </div>
-      }
-    </div>
-  `,
+  templateUrl: './dashboard.component.html',
   styles: [`
     .container {
       @apply max-w-7xl mx-auto p-6;
@@ -136,6 +74,7 @@ export class DashboardComponent implements OnInit {
   private readonly router = inject(Router);
   private readonly projectService = inject(ProjectService);
   private readonly activityService = inject(ActivityService);
+  private readonly destroyRef = inject(DestroyRef);
 
   project = signal<Project | null>(null);
   activities = signal<Activity[]>([]);
@@ -156,7 +95,7 @@ export class DashboardComponent implements OnInit {
     this.isLoading.set(true);
     this.error.set(null);
 
-    this.projectService.getById(projectId).subscribe({
+    this.projectService.getById(projectId).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: (project) => {
         this.project.set(project);
         this.loadActivities(projectId);
@@ -169,7 +108,7 @@ export class DashboardComponent implements OnInit {
   }
 
   loadActivities(projectId: string): void {
-    this.activityService.getByProjectId(projectId).subscribe({
+    this.activityService.getByProjectId(projectId).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: (activities) => {
         this.activities.set(activities);
         this.isLoading.set(false);
