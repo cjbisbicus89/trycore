@@ -78,8 +78,7 @@ export class ProjectListComponent {
 
   projectForm = this.fb.group({
     name: ['', [Validators.required, Validators.maxLength(200)]],
-    description: ['', [Validators.required, Validators.maxLength(500)]],
-    budget: [0, [Validators.required, Validators.min(0.01)]]
+    description: ['', [Validators.required, Validators.maxLength(500)]]
   });
 
   ngOnInit(): void {

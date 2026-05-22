@@ -1,42 +1,42 @@
 <div class="summary-grid">
   <app-indicator-card
     label="PV (Planned Value)"
-    [value]="evmIndicators().pv"
+    [value]="evmIndicators().plannedValue"
     [status]="getPvStatus()"
   />
   <app-indicator-card
     label="EV (Earned Value)"
-    [value]="evmIndicators().ev"
+    [value]="evmIndicators().earnedValue"
     [status]="getEvStatus()"
   />
   <app-indicator-card
     label="AC (Actual Cost)"
-    [value]="evmIndicators().ac"
+    [value]="evmIndicators().actualCost"
     [status]="getAcStatus()"
   />
   <app-indicator-card
     label="CV (Cost Variance)"
-    [value]="evmIndicators().cv"
+    [value]="evmIndicators().costVariance"
     [status]="getCvStatus()"
   />
   <app-indicator-card
     label="SV (Schedule Variance)"
-    [value]="evmIndicators().sv"
+    [value]="evmIndicators().scheduleVariance"
     [status]="getSvStatus()"
   />
   <app-indicator-card
     label="CPI (Cost Performance Index)"
-    [value]="evmIndicators().cpi"
+    [value]="evmIndicators().costPerformanceIndex"
     [status]="getCpiStatus()"
   />
   <app-indicator-card
     label="SPI (Schedule Performance Index)"
-    [value]="evmIndicators().spi"
+    [value]="evmIndicators().schedulePerformanceIndex"
     [status]="getSpiStatus()"
   />
   <app-indicator-card
-    label="Estado"
-    [value]="evmIndicators().status"
+    label="Estado Costo"
+    [value]="null"
     [status]="getOverallStatus()"
   />
 </div>

@@ -17,9 +17,31 @@ export const errorInterceptor = (request: HttpRequest<unknown>, next: HttpHandle
         errorMessage = `Error: ${error.error.message}`;
       } else {
         // Server-side error
-        errorMessage = `Error Code: ${error.status}\nMessage: ${error.message}`;
+        switch (error.status) {
+          case 400:
+            const errorBody = error.error as { errors?: Record<string, string[]>; message?: string };
+            if (errorBody?.errors) {
+              const errorMessages = Object.values(errorBody.errors).flat();
+              errorMessage = errorMessages.join(', ');
+            } else if (errorBody?.message) {
+              errorMessage = errorBody.message;
+            } else {
+              errorMessage = 'Solicitud inválida';
+            }
+            break;
+          case 404:
+            errorMessage = 'Recurso no encontrado';
+            break;
+          case 500:
+            errorMessage = 'Error interno del servidor';
+            break;
+          default:
+            errorMessage = `Error Code: ${error.status}\nMessage: ${error.message}`;
+        }
       }
 
+      // TODO: Implementar ToastService o signal global para mostrar el error
+      // Por ahora, el error se propaga para que el componente lo maneje
       return throwError(() => errorMessage);
     })
   );

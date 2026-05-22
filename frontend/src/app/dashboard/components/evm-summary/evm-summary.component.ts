@@ -17,51 +17,45 @@ import type { EvmIndicators } from '../../../core/models';
 export class EvmSummaryComponent {
   evmIndicators = input.required<EvmIndicators>();
 
-  getPvStatus(): 'healthy' | 'warning' | 'danger' | null {
+  getPvStatus(): string | null {
     return null;
   }
 
-  getEvStatus(): 'healthy' | 'warning' | 'danger' | null {
+  getEvStatus(): string | null {
     return null;
   }
 
-  getAcStatus(): 'healthy' | 'warning' | 'danger' | null {
+  getAcStatus(): string | null {
     return null;
   }
 
-  getCvStatus(): 'healthy' | 'warning' | 'danger' | null {
-    const cv = this.evmIndicators().cv;
-    if (cv === null || cv === undefined) return null;
-    return cv >= 0 ? 'healthy' : 'danger';
+  getCvStatus(): string | null {
+    const cv = this.evmIndicators().costVariance;
+    return cv >= 0 ? 'Bajo Presupuesto' : 'Sobre Presupuesto';
   }
 
-  getSvStatus(): 'healthy' | 'warning' | 'danger' | null {
-    const sv = this.evmIndicators().sv;
-    if (sv === null || sv === undefined) return null;
-    return sv >= 0 ? 'healthy' : 'danger';
+  getSvStatus(): string | null {
+    const sv = this.evmIndicators().scheduleVariance;
+    return sv >= 0 ? 'Adelantado al Cronograma' : 'Atrasado al Cronograma';
   }
 
-  getCpiStatus(): 'healthy' | 'warning' | 'danger' | null {
-    const cpi = this.evmIndicators().cpi;
-    if (cpi === null || cpi === undefined) return null;
-    if (cpi >= 1) return 'healthy';
-    if (cpi >= 0.9) return 'warning';
-    return 'danger';
+  getCpiStatus(): string | null {
+    const cpi = this.evmIndicators().costPerformanceIndex;
+    if (cpi === null) return null;
+    if (cpi >= 1) return 'Bajo Presupuesto';
+    if (cpi >= 0.9) return 'En Presupuesto';
+    return 'Sobre Presupuesto';
   }
 
-  getSpiStatus(): 'healthy' | 'warning' | 'danger' | null {
-    const spi = this.evmIndicators().spi;
-    if (spi === null || spi === undefined) return null;
-    if (spi >= 1) return 'healthy';
-    if (spi >= 0.9) return 'warning';
-    return 'danger';
+  getSpiStatus(): string | null {
+    const spi = this.evmIndicators().schedulePerformanceIndex;
+    if (spi === null) return null;
+    if (spi >= 1) return 'Adelantado al Cronograma';
+    if (spi >= 0.9) return 'En Cronograma';
+    return 'Atrasado al Cronograma';
   }
 
-  getOverallStatus(): 'healthy' | 'warning' | 'danger' | null {
-    const status = this.evmIndicators().status?.toLowerCase();
-    if (status === 'healthy' || status === 'on track') return 'healthy';
-    if (status === 'warning' || status === 'at risk') return 'warning';
-    if (status === 'danger' || status === 'off track') return 'danger';
-    return null;
+  getOverallStatus(): string | null {
+    return this.evmIndicators().costStatus;
   }
 }

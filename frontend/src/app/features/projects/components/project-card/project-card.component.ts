@@ -1,4 +1,4 @@
-import { Component, input, output } from '@angular/core';
+import { Component, input, output, computed } from '@angular/core';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { StatusBadgeComponent } from '../../../../shared/components/status-badge/status-badge.component';
@@ -35,7 +35,10 @@ import type { Project } from '../../../../core/models';
       @apply text-sm font-medium text-slate-900;
     }
     .actions {
-      @apply flex justify-end;
+      @apply flex justify-end gap-2;
+    }
+    .btn-view {
+      @apply px-3 py-1 text-sm bg-blue-600 text-white hover:bg-blue-700 rounded transition-colors;
     }
     .btn-delete {
       @apply px-3 py-1 text-sm text-red-600 hover:text-red-700 hover:bg-red-50 rounded transition-colors;
@@ -47,6 +50,11 @@ export class ProjectCardComponent {
   delete = output<string>();
 
   constructor(private readonly router: Router) {}
+
+  formattedDate = computed(() => {
+    const date = new Date(this.project().createdAt);
+    return date.toLocaleDateString('es-ES', { year: 'numeric', month: 'short', day: 'numeric' });
+  });
 
   navigateToDashboard(): void {
     this.router.navigate(['/dashboard', this.project().id]);

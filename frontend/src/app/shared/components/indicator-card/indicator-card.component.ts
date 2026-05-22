@@ -1,10 +1,11 @@
 import { Component, input, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { StatusBadgeComponent } from '../status-badge/status-badge.component';
 
 @Component({
   selector: 'app-indicator-card',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, StatusBadgeComponent],
   templateUrl: './indicator-card.component.html',
   styles: [`
     .card {
@@ -25,12 +26,16 @@ import { CommonModule } from '@angular/common';
     .value {
       @apply text-3xl font-bold text-slate-900 tracking-tight;
     }
+    .subtitle {
+      @apply text-sm text-slate-600 mt-1;
+    }
   `]
 })
 export class IndicatorCardComponent {
   label = input.required<string>();
   value = input<number | null>(null);
-  status = input<'healthy' | 'warning' | 'danger' | null>(null);
+  subtitle = input<string>('');
+  status = input<string | null>(null);
 
   cardClasses = computed(() => {
     const statusValue = this.status();
@@ -39,18 +44,18 @@ export class IndicatorCardComponent {
 
   formattedValue = computed(() => {
     const value = this.value();
-    return value !== null ? value.toFixed(2) : 'N/A';
+    return value !== null ? value.toFixed(2) : '—';
   });
 
-  private getStatusClass(status: 'healthy' | 'warning' | 'danger' | null): string {
-    if (status === 'healthy') {
+  private getStatusClass(status: string | null): string {
+    if (status === 'Bajo Presupuesto' || status === 'Adelantado al Cronograma') {
       return 'card-healthy';
     }
-    if (status === 'warning') {
-      return 'card-warning';
-    }
-    if (status === 'danger') {
+    if (status === 'Sobre Presupuesto' || status === 'Atrasado al Cronograma') {
       return 'card-danger';
+    }
+    if (status === 'En Presupuesto' || status === 'En Cronograma') {
+      return 'card-warning';
     }
     return '';
   }

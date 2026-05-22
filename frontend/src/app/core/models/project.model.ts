@@ -5,7 +5,7 @@ export interface Project {
   id: string;
   name: string;
   description: string;
-  budget: number;
+  createdAt: string;
+  indicators: EvmIndicators | null;
   activities: Activity[];
-  evmIndicators: EvmIndicators;
 }

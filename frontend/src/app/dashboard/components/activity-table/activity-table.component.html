@@ -3,13 +3,17 @@
     <thead>
       <tr>
         <th>Actividad</th>
-        <th>Costo Presupuestado</th>
-        <th>% Planificado</th>
-        <th>% Actual</th>
-        <th>Costo Real</th>
+        <th>BAC</th>
+        <th>% Plan.</th>
+        <th>% Real</th>
+        <th>AC</th>
+        <th>PV</th>
+        <th>EV</th>
         <th>CPI</th>
         <th>SPI</th>
-        <th>Estado</th>
+        <th>EAC</th>
+        <th>VAC</th>
+        <th>Acciones</th>
       </tr>
     </thead>
     <tbody>
@@ -20,10 +24,21 @@
           <td>{{ activity.plannedPercentage }}%</td>
           <td>{{ activity.actualPercentage }}%</td>
           <td>\${{ activity.actualCost | formatDecimal }}</td>
-          <td>{{ activity.evmIndicators.cpi | formatDecimal }}</td>
-          <td>{{ activity.evmIndicators.spi | formatDecimal }}</td>
+          <td>\${{ activity.plannedValue | formatDecimal }}</td>
+          <td>\${{ activity.earnedValue | formatDecimal }}</td>
           <td>
-            <app-status-badge [status]="activity.evmIndicators.status || 'N/A'" />
+            {{ activity.indicators.costPerformanceIndex | formatDecimal }}
+            <app-status-badge [status]="activity.indicators.costStatus || 'N/A'" />
+          </td>
+          <td>
+            {{ activity.indicators.schedulePerformanceIndex | formatDecimal }}
+            <app-status-badge [status]="activity.indicators.scheduleStatus || 'N/A'" />
+          </td>
+          <td>\${{ activity.indicators.estimateAtCompletion | formatDecimal }}</td>
+          <td>\${{ activity.indicators.varianceAtCompletion | formatDecimal }}</td>
+          <td>
+            <button class="btn-edit" (click)="onEdit(activity)">Editar</button>
+            <button class="btn-delete" (click)="onDelete(activity.id)">Eliminar</button>
           </td>
         </tr>
       }

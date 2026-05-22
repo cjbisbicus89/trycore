@@ -28,19 +28,19 @@ export class StatusBadgeComponent {
   status = input.required<string>();
 
   badgeClasses = computed(() => {
-    const statusValue = this.status().toLowerCase();
+    const statusValue = this.status();
     return `badge ${this.getColorClass(statusValue)}`;
   });
 
   private getColorClass(status: string): string {
-    if (status === 'healthy' || status === 'on track') {
+    if (status === 'Bajo Presupuesto' || status === 'Adelantado al Cronograma') {
       return 'badge-healthy';
     }
-    if (status === 'warning' || status === 'at risk') {
-      return 'badge-warning';
-    }
-    if (status === 'danger' || status === 'off track') {
+    if (status === 'Sobre Presupuesto' || status === 'Atrasado al Cronograma') {
       return 'badge-danger';
+    }
+    if (status === 'En Presupuesto' || status === 'En Cronograma') {
+      return 'badge-warning';
     }
     return 'badge-neutral';
   }
