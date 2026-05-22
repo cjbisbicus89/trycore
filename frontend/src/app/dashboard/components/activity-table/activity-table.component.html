@@ -1,44 +1,81 @@
-<div class="table-container">
-  <table class="table">
+<div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+  <table class="w-full text-sm">
     <thead>
-      <tr>
-        <th>Actividad</th>
-        <th>BAC</th>
-        <th>% Plan.</th>
-        <th>% Real</th>
-        <th>AC</th>
-        <th>PV</th>
-        <th>EV</th>
-        <th>CPI</th>
-        <th>SPI</th>
-        <th>EAC</th>
-        <th>VAC</th>
-        <th>Acciones</th>
+      <tr class="bg-trycore-navy text-white">
+        <th class="px-4 py-3 text-left font-medium text-xs uppercase tracking-wider">
+          Actividad
+        </th>
+        <th class="px-4 py-3 text-left font-medium text-xs uppercase tracking-wider">
+          BAC
+        </th>
+        <th class="px-4 py-3 text-left font-medium text-xs uppercase tracking-wider">
+          % Plan.
+        </th>
+        <th class="px-4 py-3 text-left font-medium text-xs uppercase tracking-wider">
+          % Real
+        </th>
+        <th class="px-4 py-3 text-left font-medium text-xs uppercase tracking-wider">
+          AC
+        </th>
+        <th class="px-4 py-3 text-left font-medium text-xs uppercase tracking-wider">
+          PV
+        </th>
+        <th class="px-4 py-3 text-left font-medium text-xs uppercase tracking-wider">
+          EV
+        </th>
+        <th class="px-4 py-3 text-left font-medium text-xs uppercase tracking-wider">
+          CPI
+        </th>
+        <th class="px-4 py-3 text-left font-medium text-xs uppercase tracking-wider">
+          SPI
+        </th>
+        <th class="px-4 py-3 text-left font-medium text-xs uppercase tracking-wider">
+          EAC
+        </th>
+        <th class="px-4 py-3 text-left font-medium text-xs uppercase tracking-wider">
+          VAC
+        </th>
+        <th class="px-4 py-3 text-left font-medium text-xs uppercase tracking-wider">
+          Acciones
+        </th>
       </tr>
     </thead>
     <tbody>
       @for (activity of activities(); track activity.id) {
-        <tr [class]="getRowClasses(activity)">
-          <td class="activity-name">{{ activity.name }}</td>
-          <td>\${{ activity.budgetedCost | formatDecimal }}</td>
-          <td>{{ activity.plannedPercentage }}%</td>
-          <td>{{ activity.actualPercentage }}%</td>
-          <td>\${{ activity.actualCost | formatDecimal }}</td>
-          <td>\${{ activity.plannedValue | formatDecimal }}</td>
-          <td>\${{ activity.earnedValue | formatDecimal }}</td>
-          <td>
+        <tr
+          class="border-t border-slate-100 hover:bg-slate-50 transition-colors"
+          [ngClass]="getRowClass(activity)"
+        >
+          <td class="px-4 py-3 font-medium">{{ activity.name }}</td>
+          <td class="px-4 py-3">\${{ activity.budgetedCost | formatDecimal }}</td>
+          <td class="px-4 py-3">{{ activity.plannedPercentage }}%</td>
+          <td class="px-4 py-3">{{ activity.actualPercentage }}%</td>
+          <td class="px-4 py-3">\${{ activity.actualCost | formatDecimal }}</td>
+          <td class="px-4 py-3">\${{ activity.plannedValue | formatDecimal }}</td>
+          <td class="px-4 py-3">\${{ activity.earnedValue | formatDecimal }}</td>
+          <td class="px-4 py-3">
             {{ activity.indicators.costPerformanceIndex | formatDecimal }}
             <app-status-badge [status]="activity.indicators.costStatus || 'N/A'" />
           </td>
-          <td>
+          <td class="px-4 py-3">
             {{ activity.indicators.schedulePerformanceIndex | formatDecimal }}
             <app-status-badge [status]="activity.indicators.scheduleStatus || 'N/A'" />
           </td>
-          <td>\${{ activity.indicators.estimateAtCompletion | formatDecimal }}</td>
-          <td>\${{ activity.indicators.varianceAtCompletion | formatDecimal }}</td>
-          <td>
-            <button class="btn-edit" (click)="onEdit(activity)">Editar</button>
-            <button class="btn-delete" (click)="onDelete(activity.id)">Eliminar</button>
+          <td class="px-4 py-3">\${{ activity.indicators.estimateAtCompletion | formatDecimal }}</td>
+          <td class="px-4 py-3">\${{ activity.indicators.varianceAtCompletion | formatDecimal }}</td>
+          <td class="px-4 py-3">
+            <button
+              (click)="onEdit(activity)"
+              class="bg-trycore-navy text-white text-xs font-medium px-2 py-1 rounded hover:bg-trycore-blue transition-colors mr-1"
+            >
+              Editar
+            </button>
+            <button
+              (click)="onDelete(activity.id)"
+              class="text-red-500 hover:text-red-700 text-xs font-medium px-2 py-1 transition-colors"
+            >
+              Eliminar
+            </button>
           </td>
         </tr>
       }

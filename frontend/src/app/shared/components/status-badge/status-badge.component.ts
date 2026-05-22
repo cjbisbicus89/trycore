@@ -1,47 +1,32 @@
 import { Component, input, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { EvmStatusNames } from '../../../core/constants';
 
 @Component({
   selector: 'app-status-badge',
   standalone: true,
   imports: [CommonModule],
   templateUrl: './status-badge.component.html',
-  styles: [`
-    .badge {
-      @apply px-2 py-1 rounded-full text-xs font-medium;
-    }
-    .badge-healthy {
-      @apply bg-emerald-100 text-emerald-800;
-    }
-    .badge-warning {
-      @apply bg-amber-100 text-amber-800;
-    }
-    .badge-danger {
-      @apply bg-red-100 text-red-800;
-    }
-    .badge-neutral {
-      @apply bg-slate-100 text-slate-800;
-    }
-  `]
+  styles: []
 })
 export class StatusBadgeComponent {
-  status = input.required<string>();
+  status = input.required<string | null>();
 
   badgeClasses = computed(() => {
     const statusValue = this.status();
-    return `badge ${this.getColorClass(statusValue)}`;
+    return this.getColorClass(statusValue);
   });
 
-  private getColorClass(status: string): string {
-    if (status === 'Bajo Presupuesto' || status === 'Adelantado al Cronograma') {
-      return 'badge-healthy';
-    }
-    if (status === 'Sobre Presupuesto' || status === 'Atrasado al Cronograma') {
-      return 'badge-danger';
-    }
-    if (status === 'En Presupuesto' || status === 'En Cronograma') {
-      return 'badge-warning';
-    }
-    return 'badge-neutral';
+  private getColorClass(status: string | null): string {
+    const map: Record<string, string> = {
+      [EvmStatusNames.UnderBudget]: 'bg-emerald-100 text-emerald-800',
+      [EvmStatusNames.OverBudget]: 'bg-red-100 text-red-800',
+      [EvmStatusNames.OnBudget]: 'bg-amber-100 text-amber-800',
+      [EvmStatusNames.AheadOfSchedule]: 'bg-emerald-100 text-emerald-800',
+      [EvmStatusNames.BehindSchedule]: 'bg-red-100 text-red-800',
+      [EvmStatusNames.OnSchedule]: 'bg-amber-100 text-amber-800',
+      [EvmStatusNames.NotAvailable]: 'bg-slate-100 text-slate-500',
+    };
+    return map[status ?? ''] ?? 'bg-slate-100 text-slate-500';
   }
 }

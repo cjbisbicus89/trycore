@@ -1,8 +1,12 @@
-<div [class]="cardClasses()">
-  <div class="label">{{ label() }}</div>
-  <div class="value">{{ formattedValue() }}</div>
+<div class="bg-white rounded-xl border border-slate-200 p-4 shadow-sm border-l-4 {{ borderClass() }}">
+  <p class="text-xs font-medium text-slate-500 uppercase tracking-widest mb-1">
+    {{ label() }}
+  </p>
+  <p class="text-3xl font-bold text-trycore-navy">
+    {{ formattedValue() }}
+  </p>
   @if (subtitle()) {
-    <div class="subtitle">{{ subtitle() }}</div>
+    <p class="text-xs text-slate-400 mt-1">{{ subtitle() }}</p>
   }
   @if (status()) {
     <app-status-badge [status]="status()" />
