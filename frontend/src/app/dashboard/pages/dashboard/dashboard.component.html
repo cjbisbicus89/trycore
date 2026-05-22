@@ -1,53 +1,71 @@
-<div class="container">
+<div class="min-h-screen bg-[#F5F7FA]">
   @if (isLoading()) {
-    <div class="loading">
-      <div class="skeleton-header"></div>
-      <div class="skeleton-cards"></div>
-      <div class="skeleton-table"></div>
+    <div class="max-w-7xl mx-auto p-6 space-y-6">
+      <div class="h-32 bg-slate-200 rounded-lg animate-pulse"></div>
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div class="h-24 bg-slate-200 rounded-lg animate-pulse"></div>
+        <div class="h-24 bg-slate-200 rounded-lg animate-pulse"></div>
+        <div class="h-24 bg-slate-200 rounded-lg animate-pulse"></div>
+        <div class="h-24 bg-slate-200 rounded-lg animate-pulse"></div>
+      </div>
+      <div class="h-64 bg-slate-200 rounded-lg animate-pulse"></div>
     </div>
   } @else if (error()) {
-    <div class="error-state">
+    <div class="max-w-7xl mx-auto p-6 text-center py-12 text-slate-500">
       <p>{{ error() }}</p>
-      <button class="btn-back" (click)="goBack()">Volver</button>
+      <button class="mb-4 px-4 py-2 bg-slate-200 text-slate-700 rounded-lg hover:bg-slate-300 transition-colors" (click)="goBack()">Volver</button>
     </div>
   } @else if (project()) {
-    <div class="header">
-      <button class="btn-back" (click)="goBack()">← Volver</button>
-      <div class="header-content">
-        <h1 class="project-name">{{ project()!.name }}</h1>
-        <p class="project-description">{{ project()!.description }}</p>
+    <div class="max-w-7xl mx-auto p-6">
+      <div class="bg-trycore-navy rounded-xl p-6 mb-6 text-white">
+        <div class="flex items-center justify-between">
+          <div>
+            <p class="text-white/60 text-xs uppercase tracking-widest mb-1">Dashboard EVM</p>
+            <h1 class="text-2xl font-bold">{{ project()!.name }}</h1>
+            <p class="text-white/70 text-sm mt-1">{{ project()!.description }}</p>
+          </div>
+          <button
+            (click)="openCreateModal()"
+            class="bg-trycore-orange hover:bg-trycore-orange-light
+                   text-white font-medium text-sm
+                   px-5 py-2.5 rounded-lg
+                   transition-colors duration-200
+                   flex items-center gap-2"
+          >
+            + Nueva Actividad
+          </button>
+        </div>
       </div>
-      <button class="btn-primary" (click)="openCreateModal()">Nueva Actividad</button>
-    </div>
 
-    @if (consolidatedIndicators()) {
-      <app-evm-summary [evmIndicators]="consolidatedIndicators()!" />
-    }
+      @if (consolidatedIndicators()) {
+        <app-evm-summary [evmIndicators]="consolidatedIndicators()!" [totalBudgetedCost]="totalBudgetedCost()" />
+      }
 
-    <div class="activities-section">
-      <h2 class="section-title">Actividades</h2>
-      <app-activity-table
-        [activities]="activities()"
-        (edit)="openEditModal($event)"
-        (delete)="onActivityDeleted($event)"
-      />
-    </div>
-
-    @if (activities().length > 0) {
-      <div class="chart-section">
-        <h2 class="section-title">Gráfica EVM</h2>
-        <app-evm-chart [activities]="activities()" />
+      <div class="bg-white shadow-sm border border-slate-100 rounded-lg p-6 mb-8">
+        <h2 class="text-xl font-semibold text-slate-900 mb-4">Actividades</h2>
+        <app-activity-table
+          [activities]="activities()"
+          (edit)="openEditModal($event)"
+          (delete)="onActivityDeleted($event)"
+        />
       </div>
-    }
 
-    @if (showModal()) {
-      <app-activity-form-modal
-        [projectId]="project()!.id"
-        [activity]="selectedActivity()"
-        [isOpen]="showModal()"
-        (saved)="onActivitySaved()"
-        (cancelled)="closeModal()"
-      />
-    }
+      @if (activities().length > 0) {
+        <div class="bg-white shadow-sm border border-slate-100 rounded-lg p-6">
+          <h2 class="text-xl font-semibold text-slate-900 mb-4">Gráfica EVM</h2>
+          <app-evm-chart [activities]="activities()" />
+        </div>
+      }
+
+      @if (showModal()) {
+        <app-activity-form-modal
+          [projectId]="project()!.id"
+          [activity]="selectedActivity()"
+          [isOpen]="showModal()"
+          (saved)="onActivitySaved()"
+          (cancelled)="closeModal()"
+        />
+      }
+    </div>
   }
 </div>
