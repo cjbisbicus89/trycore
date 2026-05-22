@@ -6,47 +6,55 @@ public sealed class EVMCalculationService : IEVMCalculator
 {
     public EVMIndicators Calculate(decimal plannedValue, decimal earnedValue, decimal actualCost, decimal budgetedCost)
     {
-        // Cálculo de variaciones
-        var cv = earnedValue - actualCost;
-        var sv = earnedValue - plannedValue;
+        var costVariance = earnedValue - actualCost;
+        var scheduleVariance = earnedValue - plannedValue;
 
-        // Cálculo de índices con manejo de división por cero
-        var cpi = actualCost > 0 ? earnedValue / actualCost : (decimal?)null;
-        var spi = plannedValue > 0 ? earnedValue / plannedValue : (decimal?)null;
+        var costPerformanceIndex = actualCost > EVMConstants.MinimumValue ? earnedValue / actualCost : (decimal?)null;
+        var schedulePerformanceIndex = plannedValue > EVMConstants.MinimumValue ? earnedValue / plannedValue : (decimal?)null;
 
-        // Cálculo de proyecciones con manejo de BAC = 0
-        var eac = (cpi.HasValue && cpi > 0 && budgetedCost > 0) ? budgetedCost / cpi : (decimal?)null;
-        var vac = eac.HasValue ? budgetedCost - eac : (decimal?)null;
+        var estimateAtCompletion = (costPerformanceIndex.HasValue && costPerformanceIndex > EVMConstants.MinimumValue && budgetedCost > EVMConstants.MinimumValue)
+            ? budgetedCost / costPerformanceIndex
+            : (decimal?)null;
+        var varianceAtCompletion = estimateAtCompletion.HasValue
+            ? budgetedCost - estimateAtCompletion
+            : (decimal?)null;
 
-        // Interpretación del estado de costos
-        var costStatus = cpi switch
-        {
-            > 1 => EVMStatus.UnderBudget,
-            < 1 => EVMStatus.OverBudget,
-            1 => EVMStatus.OnBudget,
-            _ => EVMStatus.CostNotApplicable,
-        };
-
-        // Interpretación del estado del cronograma
-        var scheduleStatus = spi switch
-        {
-            > 1 => EVMStatus.AheadOfSchedule,
-            < 1 => EVMStatus.BehindSchedule,
-            1 => EVMStatus.OnSchedule,
-            _ => EVMStatus.ScheduleNotApplicable,
-        };
+        var costStatus = DetermineCostStatus(costPerformanceIndex);
+        var scheduleStatus = DetermineScheduleStatus(schedulePerformanceIndex);
 
         return new EVMIndicators(
             plannedValue,
             earnedValue,
             actualCost,
-            cv,
-            sv,
-            cpi,
-            spi,
-            eac,
-            vac,
+            costVariance,
+            scheduleVariance,
+            costPerformanceIndex,
+            schedulePerformanceIndex,
+            estimateAtCompletion,
+            varianceAtCompletion,
             costStatus,
             scheduleStatus);
+    }
+
+    private static string DetermineCostStatus(decimal? costPerformanceIndex)
+    {
+        return costPerformanceIndex switch
+        {
+            > EVMConstants.PerformanceIndexThreshold => EVMStatus.BajoPresupuesto,
+            < EVMConstants.PerformanceIndexThreshold => EVMStatus.SobrePresupuesto,
+            EVMConstants.PerformanceIndexThreshold => EVMStatus.EnPresupuesto,
+            _ => EVMStatus.CostoNoAplicable,
+        };
+    }
+
+    private static string DetermineScheduleStatus(decimal? schedulePerformanceIndex)
+    {
+        return schedulePerformanceIndex switch
+        {
+            > EVMConstants.PerformanceIndexThreshold => EVMStatus.AdelantadoCronograma,
+            < EVMConstants.PerformanceIndexThreshold => EVMStatus.AtrasadoCronograma,
+            EVMConstants.PerformanceIndexThreshold => EVMStatus.EnCronograma,
+            _ => EVMStatus.CronogramaNoAplicable,
+        };
     }
 }

@@ -1,6 +1,7 @@
 namespace EVM.ProjectManagement.Application.Projects.Validators;
 
 using EVM.ProjectManagement.Application.Projects.DTOs;
+using EVM.ProjectManagement.Domain.Entities;
 using FluentValidation;
 
 public sealed class UpdateProjectRequestValidator : AbstractValidator<UpdateProjectRequest>
@@ -9,10 +10,10 @@ public sealed class UpdateProjectRequestValidator : AbstractValidator<UpdateProj
     {
         this.RuleFor(x => x.Name)
             .NotEmpty()
-            .MaximumLength(200);
+            .MaximumLength(ProjectConstants.MaxNameLength);
 
         this.RuleFor(x => x.Description)
             .NotEmpty()
-            .MaximumLength(1000);
+            .MaximumLength(ProjectConstants.MaxDescriptionLength);
     }
 }

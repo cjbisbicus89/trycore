@@ -3,103 +3,135 @@ namespace EVM.ProjectManagement.UnitTests.Domain;
 using EVM.ProjectManagement.Domain.Entities;
 using EVM.ProjectManagement.Domain.Exceptions;
 using EVM.ProjectManagement.UnitTests.Builders;
+using FluentAssertions;
 using Xunit;
 
 public sealed class ActivityInvariantTests
 {
-    [Fact]
-    public void CreateLanzaDomainExceptionCuandoBudgetedCostMenorOIgualACero()
+    [Theory]
+    [InlineData(0)]
+    [InlineData(-1)]
+    [InlineData(-100)]
+    public void Create_WhenBudgetedCostIsLessThanOrEqualToZero_ThrowsDomainException(decimal budgetedCost)
     {
         // Arrange
-        var projectId = Guid.NewGuid();
+        var activityBuilder = new ActivityBuilder().WithBudget(budgetedCost);
 
         // Act & Assert
-        Assert.Throws<DomainException>(() => Activity.Create(projectId, "Test", 0, 50, 25, 300));
-        Assert.Throws<DomainException>(() => Activity.Create(projectId, "Test", -100, 50, 25, 300));
+        var action = () => activityBuilder.Build();
+        action.Should().Throw<DomainException>();
     }
 
-    [Fact]
-    public void CreateLanzaDomainExceptionCuandoActualPercentageMayorACien()
+    [Theory]
+    [InlineData(101)]
+    [InlineData(150)]
+    [InlineData(200)]
+    public void Create_WhenActualPercentageIsGreaterThan100_ThrowsDomainException(decimal actualPercentage)
     {
         // Arrange
-        var projectId = Guid.NewGuid();
+        var activityBuilder = new ActivityBuilder().WithActualPercentage(actualPercentage);
 
         // Act & Assert
-        Assert.Throws<DomainException>(() => Activity.Create(projectId, "Test", 1000, 50, 101, 300));
-        Assert.Throws<DomainException>(() => Activity.Create(projectId, "Test", 1000, 50, 150, 300));
+        var action = () => activityBuilder.Build();
+        action.Should().Throw<DomainException>();
     }
 
-    [Fact]
-    public void CreateLanzaDomainExceptionCuandoPlannedPercentageMenorACero()
+    [Theory]
+    [InlineData(-1)]
+    [InlineData(-50)]
+    [InlineData(-100)]
+    public void Create_WhenPlannedPercentageIsLessThanZero_ThrowsDomainException(decimal plannedPercentage)
     {
         // Arrange
-        var projectId = Guid.NewGuid();
+        var activityBuilder = new ActivityBuilder().WithPlannedPercentage(plannedPercentage);
 
         // Act & Assert
-        Assert.Throws<DomainException>(() => Activity.Create(projectId, "Test", 1000, -1, 25, 300));
-        Assert.Throws<DomainException>(() => Activity.Create(projectId, "Test", 1000, -50, 25, 300));
+        var action = () => activityBuilder.Build();
+        action.Should().Throw<DomainException>();
     }
 
-    [Fact]
-    public void CreateLanzaDomainExceptionCuandoActualCostMenorACero()
+    [Theory]
+    [InlineData(-1)]
+    [InlineData(-100)]
+    [InlineData(-500)]
+    public void Create_WhenActualCostIsLessThanZero_ThrowsDomainException(decimal actualCost)
     {
         // Arrange
-        var projectId = Guid.NewGuid();
+        var activityBuilder = new ActivityBuilder().WithActualCost(actualCost);
 
         // Act & Assert
-        Assert.Throws<DomainException>(() => Activity.Create(projectId, "Test", 1000, 50, 25, -1));
-        Assert.Throws<DomainException>(() => Activity.Create(projectId, "Test", 1000, 50, 25, -100));
+        var action = () => activityBuilder.Build();
+        action.Should().Throw<DomainException>();
     }
 
-    [Fact]
-    public void CreateLanzaDomainExceptionCuandoNameVacio()
+    [Theory]
+    [InlineData("")]
+    [InlineData("   ")]
+    public void Create_WhenNameIsNullOrWhiteSpace_ThrowsDomainException(string name)
     {
         // Arrange
-        var projectId = Guid.NewGuid();
+        var activityBuilder = new ActivityBuilder().WithName(name);
 
         // Act & Assert
-        Assert.Throws<DomainException>(() => Activity.Create(projectId, string.Empty, 1000, 50, 25, 300));
-        Assert.Throws<DomainException>(() => Activity.Create(projectId, null!, 1000, 50, 25, 300));
+        var action = () => activityBuilder.Build();
+        action.Should().Throw<DomainException>();
     }
 
-    [Fact]
-    public void EarnedValueCalculadoCorrectamente()
+    [Theory]
+    [InlineData(1000, 50, 500)]
+    [InlineData(2000, 25, 500)]
+    [InlineData(5000, 75, 3750)]
+    public void EarnedValue_WhenCalculated_ReturnsCorrectValue(
+        decimal budgetedCost,
+        decimal actualPercentage,
+        decimal expectedEarnedValue)
     {
         // Arrange
         var activity = new ActivityBuilder()
-            .WithBudget(1000)
-            .WithActualPercentage(50)
+            .WithBudget(budgetedCost)
+            .WithActualPercentage(actualPercentage)
             .Build();
 
         // Act
         var earnedValue = activity.EarnedValue;
 
         // Assert
-        Assert.Equal(500, earnedValue); // 1000 * (50 / 100) = 500
+        earnedValue.Should().Be(expectedEarnedValue);
     }
 
-    [Fact]
-    public void PlannedValueCalculadoCorrectamente()
+    [Theory]
+    [InlineData(1000, 60, 600)]
+    [InlineData(2000, 40, 800)]
+    [InlineData(5000, 80, 4000)]
+    public void PlannedValue_WhenCalculated_ReturnsCorrectValue(
+        decimal budgetedCost,
+        decimal plannedPercentage,
+        decimal expectedPlannedValue)
     {
         // Arrange
         var activity = new ActivityBuilder()
-            .WithBudget(1000)
-            .WithPlannedPercentage(60)
+            .WithBudget(budgetedCost)
+            .WithPlannedPercentage(plannedPercentage)
             .Build();
 
         // Act
         var plannedValue = activity.PlannedValue;
 
         // Assert
-        Assert.Equal(600, plannedValue); // 1000 * (60 / 100) = 600
+        plannedValue.Should().Be(expectedPlannedValue);
     }
 
-    [Fact]
-    public void EarnedValueEsCeroCuandoAvanceRealEsCero()
+    [Theory]
+    [InlineData(1000, 0)]
+    [InlineData(2000, 0)]
+    [InlineData(5000, 0)]
+    public void EarnedValue_WhenActualProgressIsZero_ReturnsZero(
+        decimal budgetedCost,
+        decimal expectedEarnedValue)
     {
         // Arrange
         var activity = new ActivityBuilder()
-            .WithBudget(1000)
+            .WithBudget(budgetedCost)
             .WithActualPercentage(0)
             .Build();
 
@@ -107,61 +139,75 @@ public sealed class ActivityInvariantTests
         var earnedValue = activity.EarnedValue;
 
         // Assert
-        Assert.Equal(0, earnedValue);
+        earnedValue.Should().Be(expectedEarnedValue);
     }
 
-    [Fact]
-    public void UpdateLanzaDomainExceptionCuandoBudgetedCostMenorOIgualACero()
+    [Theory]
+    [InlineData(0)]
+    [InlineData(-1)]
+    [InlineData(-100)]
+    public void Update_WhenBudgetedCostIsLessThanOrEqualToZero_ThrowsDomainException(decimal budgetedCost)
     {
         // Arrange
         var activity = new ActivityBuilder().Build();
 
         // Act & Assert
-        Assert.Throws<DomainException>(() => activity.Update("Test", 0, 50, 25, 300));
-        Assert.Throws<DomainException>(() => activity.Update("Test", -100, 50, 25, 300));
+        var action = () => activity.Update("Test", budgetedCost, 50, 25, 300);
+        action.Should().Throw<DomainException>();
     }
 
-    [Fact]
-    public void UpdateLanzaDomainExceptionCuandoPlannedPercentageFueraDeRango()
+    [Theory]
+    [InlineData(-1)]
+    [InlineData(101)]
+    [InlineData(150)]
+    public void Update_WhenPlannedPercentageIsOutOfRange_ThrowsDomainException(decimal plannedPercentage)
     {
         // Arrange
         var activity = new ActivityBuilder().Build();
 
         // Act & Assert
-        Assert.Throws<DomainException>(() => activity.Update("Test", 1000, -1, 25, 300));
-        Assert.Throws<DomainException>(() => activity.Update("Test", 1000, 101, 25, 300));
+        var action = () => activity.Update("Test", 1000, plannedPercentage, 25, 300);
+        action.Should().Throw<DomainException>();
     }
 
-    [Fact]
-    public void UpdateLanzaDomainExceptionCuandoActualPercentageFueraDeRango()
+    [Theory]
+    [InlineData(-1)]
+    [InlineData(101)]
+    [InlineData(150)]
+    public void Update_WhenActualPercentageIsOutOfRange_ThrowsDomainException(decimal actualPercentage)
     {
         // Arrange
         var activity = new ActivityBuilder().Build();
 
         // Act & Assert
-        Assert.Throws<DomainException>(() => activity.Update("Test", 1000, 50, -1, 300));
-        Assert.Throws<DomainException>(() => activity.Update("Test", 1000, 50, 101, 300));
+        var action = () => activity.Update("Test", 1000, 50, actualPercentage, 300);
+        action.Should().Throw<DomainException>();
     }
 
-    [Fact]
-    public void UpdateLanzaDomainExceptionCuandoActualCostMenorACero()
+    [Theory]
+    [InlineData(-1)]
+    [InlineData(-100)]
+    [InlineData(-500)]
+    public void Update_WhenActualCostIsLessThanZero_ThrowsDomainException(decimal actualCost)
     {
         // Arrange
         var activity = new ActivityBuilder().Build();
 
         // Act & Assert
-        Assert.Throws<DomainException>(() => activity.Update("Test", 1000, 50, 25, -1));
-        Assert.Throws<DomainException>(() => activity.Update("Test", 1000, 50, 25, -100));
+        var action = () => activity.Update("Test", 1000, 50, 25, actualCost);
+        action.Should().Throw<DomainException>();
     }
 
-    [Fact]
-    public void UpdateLanzaDomainExceptionCuandoNameVacio()
+    [Theory]
+    [InlineData("")]
+    [InlineData("   ")]
+    public void Update_WhenNameIsNullOrWhiteSpace_ThrowsDomainException(string name)
     {
         // Arrange
         var activity = new ActivityBuilder().Build();
 
         // Act & Assert
-        Assert.Throws<DomainException>(() => activity.Update(string.Empty, 1000, 50, 25, 300));
-        Assert.Throws<DomainException>(() => activity.Update(null!, 1000, 50, 25, 300));
+        var action = () => activity.Update(name, 1000, 50, 25, 300);
+        action.Should().Throw<DomainException>();
     }
 }

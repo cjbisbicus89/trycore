@@ -2,12 +2,12 @@ namespace EVM.ProjectManagement.Domain.Services;
 
 public static class EVMStatus
 {
-    public const string UnderBudget = "Under Budget";
-    public const string OverBudget = "Over Budget";
-    public const string OnBudget = "On Budget";
-    public const string CostNotApplicable = "N/A";
-    public const string AheadOfSchedule = "Ahead of Schedule";
-    public const string BehindSchedule = "Behind Schedule";
-    public const string OnSchedule = "On Schedule";
-    public const string ScheduleNotApplicable = "N/A";
+    public const string BajoPresupuesto = "Bajo Presupuesto";
+    public const string SobrePresupuesto = "Sobre Presupuesto";
+    public const string EnPresupuesto = "En Presupuesto";
+    public const string CostoNoAplicable = "N/A";
+    public const string AdelantadoCronograma = "Adelantado al Cronograma";
+    public const string AtrasadoCronograma = "Atrasado al Cronograma";
+    public const string EnCronograma = "En Cronograma";
+    public const string CronogramaNoAplicable = "N/A";
 }

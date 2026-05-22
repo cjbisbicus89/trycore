@@ -1,10 +1,10 @@
 namespace EVM.ProjectManagement.Application.Projects;
 
-using EVM.ProjectManagement.Application.Activities;
 using EVM.ProjectManagement.Application.Activities.DTOs;
 using EVM.ProjectManagement.Application.Common.Exceptions;
 using EVM.ProjectManagement.Application.Projects.DTOs;
 using EVM.ProjectManagement.Application.Projects.Extensions;
+using EVM.ProjectManagement.Domain.Entities;
 using EVM.ProjectManagement.Domain.Repositories;
 using EVM.ProjectManagement.Domain.Services;
 using EVM.ProjectManagement.Domain.ValueObjects;
@@ -34,21 +34,25 @@ public sealed class ProjectService : IProjectService
 
     public async Task<ProjectResponse> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
     {
-        var project = await this.projectRepository.GetWithActivitiesAsync(id, cancellationToken);
-        if (project is null)
-        {
-            throw new NotFoundException($"Project with ID {id} not found");
-        }
+        var project = await this.projectRepository.GetWithActivitiesOrThrowAsync(id, cancellationToken);
+        var consolidatedIndicators = CalculateConsolidatedIndicators(project);
+        var activityResponses = MapActivitiesWithIndicators(project.Activities);
 
-        // Calcular indicadores consolidados
-        var indicators = this.evmCalculator.Calculate(
+        return project.ToResponse(consolidatedIndicators, activityResponses);
+    }
+
+    private EVMIndicators CalculateConsolidatedIndicators(Project project)
+    {
+        return this.evmCalculator.Calculate(
             project.TotalPlannedValue,
             project.TotalEarnedValue,
             project.TotalActualCost,
             project.TotalBudgetedCost);
+    }
 
-        // Mapear actividades con sus indicadores individuales
-        var activityResponses = project.Activities
+    private IReadOnlyList<ActivityResponse> MapActivitiesWithIndicators(IReadOnlyCollection<Activity> activities)
+    {
+        return activities
             .Select(a =>
             {
                 var indicators = this.evmCalculator.Calculate(
@@ -60,8 +64,6 @@ public sealed class ProjectService : IProjectService
             })
             .ToList()
             .AsReadOnly();
-
-        return project.ToResponse(indicators, activityResponses);
     }
 
     public async Task<ProjectResponse> CreateAsync(CreateProjectRequest request, CancellationToken cancellationToken = default)
@@ -69,21 +71,14 @@ public sealed class ProjectService : IProjectService
         var project = Domain.Entities.Project.Create(request.Name, request.Description);
         await this.projectRepository.AddAsync(project, cancellationToken);
 
-#pragma warning disable CA1848
-        this.logger.LogInformation("Project {ProjectId} created with name {ProjectName}", project.Id, project.Name);
-#pragma warning restore CA1848
+        this.logger.LogInformation(ProjectLogMessages.ProjectCreated, project.Id, project.Name);
 
         return project.ToResponse(null, []);
     }
 
     public async Task<ProjectResponse> UpdateAsync(Guid id, UpdateProjectRequest request, CancellationToken cancellationToken = default)
     {
-        var project = await this.projectRepository.GetByIdAsync(id, cancellationToken);
-        if (project is null)
-        {
-            throw new NotFoundException($"Project with ID {id} not found");
-        }
-
+        var project = await this.projectRepository.GetByIdOrThrowAsync(id, cancellationToken);
         project.Update(request.Name, request.Description);
         await this.projectRepository.UpdateAsync(project, cancellationToken);
 
@@ -92,12 +87,7 @@ public sealed class ProjectService : IProjectService
 
     public async Task DeleteAsync(Guid id, CancellationToken cancellationToken = default)
     {
-        var project = await this.projectRepository.GetByIdAsync(id, cancellationToken);
-        if (project is null)
-        {
-            throw new NotFoundException($"Project with ID {id} not found");
-        }
-
+        var project = await this.projectRepository.GetByIdOrThrowAsync(id, cancellationToken);
         await this.projectRepository.DeleteAsync(project, cancellationToken);
     }
 }
