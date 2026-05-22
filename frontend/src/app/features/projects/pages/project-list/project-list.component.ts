@@ -124,7 +124,7 @@ export class ProjectListComponent {
       return;
     }
 
-    this.projectService.delete(id).subscribe({
+    this.projectService.delete(id).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: () => {
         this.projects.update((projects) => projects.filter((p) => p.id !== id));
       },

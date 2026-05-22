@@ -7,13 +7,11 @@ import type { Project } from '../models';
 export interface CreateProjectRequest {
   name: string;
   description: string;
-  budget: number;
 }
 
 export interface UpdateProjectRequest {
   name: string;
   description: string;
-  budget: number;
 }
 
 @Injectable({
