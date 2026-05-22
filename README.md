@@ -4,7 +4,7 @@ Sistema para gestionar proyectos y calcular automáticamente los indicadores de 
 
 ---
 
-## 🚀 Cómo correr el proyecto (lo más simple)
+##  Cómo correr el proyecto OPCION 1
 
 Si tenés Docker Desktop instalado, esto es todo lo que necesitás:
 
