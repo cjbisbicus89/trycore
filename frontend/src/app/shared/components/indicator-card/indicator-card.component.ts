@@ -28,7 +28,7 @@ import { CommonModule } from '@angular/common';
       @apply text-xs text-slate-500 uppercase tracking-widest;
     }
     .value {
-      @apply text-3xl font-bold text-slate-900;
+      @apply text-3xl font-bold text-slate-900 tracking-tight;
     }
   `]
 })
