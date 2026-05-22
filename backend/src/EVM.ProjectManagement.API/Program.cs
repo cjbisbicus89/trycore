@@ -28,6 +28,19 @@ public sealed class Program
 
     private static void ConfigureServices(WebApplicationBuilder builder)
     {
+        builder.Services.AddCors(options =>
+        {
+            options.AddPolicy("AllowFrontend", policy =>
+            {
+                policy.WithOrigins(
+                    "http://localhost",
+                    "http://localhost:80",
+                    "http://localhost:4200")
+                .AllowAnyHeader()
+                .AllowAnyMethod();
+            });
+        });
+
         builder.Services.AddControllers();
         builder.Services.AddApplication();
         builder.Services.AddInfrastructure(builder.Configuration);
@@ -44,6 +57,7 @@ public sealed class Program
     private static void ConfigureMiddleware(WebApplication app)
     {
         app.UseMiddleware<GlobalExceptionMiddleware>();
+        app.UseCors("AllowFrontend");
         app.UseHttpsRedirection();
         app.UseAuthorization();
         app.MapControllers();
