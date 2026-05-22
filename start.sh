@@ -11,11 +11,19 @@ echo " EVM Project Management - Arranque local"
 echo "=============================================="
 echo ""
 
-echo "[1/3] Construyendo y levantando contenedores..."
+echo "[1/4] Liberando puertos..."
+lsof -ti:4200 | xargs kill -9 2>/dev/null || true
+lsof -ti:5000 | xargs kill -9 2>/dev/null || true
+pkill -f "node" 2>/dev/null || true
+pkill -f "dotnet" 2>/dev/null || true
+echo "Puertos 4200 y 5000 liberados."
+
+echo ""
+echo "[2/4] Construyendo y levantando contenedores..."
 docker compose -f "$COMPOSE_FILE" up -d --build
 
 echo ""
-echo "[2/3] Esperando a que la API este lista..."
+echo "[3/4] Esperando a que la API este lista..."
 MAX_RETRIES=30
 API_READY=false
 for i in $(seq 1 $MAX_RETRIES); do
@@ -35,7 +43,7 @@ fi
 echo "API lista."
 
 echo ""
-echo "[3/3] Abriendo URLs en el navegador..."
+echo "[4/4] Abriendo URLs en el navegador..."
 
 if command -v xdg-open >/dev/null 2>&1; then
     OPEN_CMD=xdg-open
