@@ -9,61 +9,7 @@ import type { Activity } from '../../../core/models';
   selector: 'app-activity-form-modal',
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule],
-  template: `
-    @if (isOpen()) {
-      <div class="modal-overlay" (click)="cancel()">
-        <div class="modal-content" (click)="$event.stopPropagation()">
-          <div class="modal-header">
-            <h2 class="modal-title">{{ isEditMode() ? 'Editar Actividad' : 'Nueva Actividad' }}</h2>
-            <button class="btn-close" (click)="cancel()">✕</button>
-          </div>
-          <form [formGroup]="activityForm" (ngSubmit)="save()">
-            <div class="form-group">
-              <label for="name">Nombre</label>
-              <input id="name" type="text" formControlName="name" placeholder="Nombre de la actividad" />
-              @if (activityForm.get('name')?.invalid && activityForm.get('name')?.touched) {
-                <span class="error">El nombre es requerido (máx 200 caracteres)</span>
-              }
-            </div>
-            <div class="form-group">
-              <label for="budgetedCost">Costo Presupuestado</label>
-              <input id="budgetedCost" type="number" formControlName="budgetedCost" placeholder="0.00" step="0.01" />
-              @if (activityForm.get('budgetedCost')?.invalid && activityForm.get('budgetedCost')?.touched) {
-                <span class="error">El costo debe ser mayor a 0</span>
-              }
-            </div>
-            <div class="form-group">
-              <label for="plannedPercentage">% Planificado</label>
-              <input id="plannedPercentage" type="number" formControlName="plannedPercentage" placeholder="0" min="0" max="100" />
-              @if (activityForm.get('plannedPercentage')?.invalid && activityForm.get('plannedPercentage')?.touched) {
-                <span class="error">Debe estar entre 0 y 100</span>
-              }
-            </div>
-            <div class="form-group">
-              <label for="actualPercentage">% Actual</label>
-              <input id="actualPercentage" type="number" formControlName="actualPercentage" placeholder="0" min="0" max="100" />
-              @if (activityForm.get('actualPercentage')?.invalid && activityForm.get('actualPercentage')?.touched) {
-                <span class="error">Debe estar entre 0 y 100</span>
-              }
-            </div>
-            <div class="form-group">
-              <label for="actualCost">Costo Real</label>
-              <input id="actualCost" type="number" formControlName="actualCost" placeholder="0.00" step="0.01" />
-              @if (activityForm.get('actualCost')?.invalid && activityForm.get('actualCost')?.touched) {
-                <span class="error">El costo debe ser mayor o igual a 0</span>
-              }
-            </div>
-            <div class="form-actions">
-              <button type="button" class="btn-secondary" (click)="cancel()" [disabled]="isSaving()">Cancelar</button>
-              <button type="submit" class="btn-primary" [disabled]="isSaving() || activityForm.invalid">
-                {{ isSaving() ? 'Guardando...' : (isEditMode() ? 'Actualizar' : 'Crear') }}
-              </button>
-            </div>
-          </form>
-        </div>
-      </div>
-    }
-  `,
+  templateUrl: './activity-form-modal.component.html',
   styles: [`
     .modal-overlay {
       @apply fixed inset-0 bg-black/50 flex items-center justify-center z-50 transition-opacity;

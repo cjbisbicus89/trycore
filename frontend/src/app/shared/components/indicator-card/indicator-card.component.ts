@@ -5,12 +5,7 @@ import { CommonModule } from '@angular/common';
   selector: 'app-indicator-card',
   standalone: true,
   imports: [CommonModule],
-  template: `
-    <div [class]="cardClasses()">
-      <div class="label">{{ label() }}</div>
-      <div class="value">{{ formattedValue() }}</div>
-    </div>
-  `,
+  templateUrl: './indicator-card.component.html',
   styles: [`
     .card {
       @apply bg-white shadow-sm border border-slate-100 rounded-lg p-4;

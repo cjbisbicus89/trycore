@@ -5,11 +5,7 @@ import { CommonModule } from '@angular/common';
   selector: 'app-status-badge',
   standalone: true,
   imports: [CommonModule],
-  template: `
-    <span [class]="badgeClasses()">
-      {{ status() }}
-    </span>
-  `,
+  templateUrl: './status-badge.component.html',
   styles: [`
     .badge {
       @apply px-2 py-1 rounded-full text-xs font-medium;
