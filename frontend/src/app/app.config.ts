@@ -4,6 +4,7 @@ import { provideHttpClient, withInterceptors, withFetch } from '@angular/common/
 import { provideAnimations } from '@angular/platform-browser/animations';
 import { routes } from './app.routes';
 import { provideClientHydration, withEventReplay } from '@angular/platform-browser';
+import { provideCharts, withDefaultRegisterables } from 'ng2-charts';
 import { errorInterceptor } from './core/interceptors/error.interceptor';
 
 export const appConfig: ApplicationConfig = {
@@ -12,6 +13,7 @@ export const appConfig: ApplicationConfig = {
     provideRouter(routes),
     provideClientHydration(withEventReplay()),
     provideHttpClient(withFetch(), withInterceptors([errorInterceptor])),
-    provideAnimations()
+    provideAnimations(),
+    provideCharts(withDefaultRegisterables())
   ]
 };
