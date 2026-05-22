@@ -1,15 +1,49 @@
 root = true
 
-[*.cs]
+[*]
 indent_style = space
 indent_size = 4
-end_of_line = crlf
+end_of_line = lf
+charset = utf-8
 trim_trailing_whitespace = true
 insert_final_newline = true
 
-dotnet_naming_rule.private_fields.symbols = private_fields
-dotnet_naming_rule.private_fields.style = underscore_camel_case
-dotnet_naming_rule.private_fields.severity = warning
+[*.cs]
+dotnet_sort_system_directives_first = true
+csharp_style_var_for_built_in_types = false
+csharp_style_var_when_type_is_apparent = true
+csharp_style_var_elsewhere = false
+csharp_new_line_before_open_brace = all
+csharp_prefer_braces = true
+dotnet_naming_rule.private_fields_should_be_camel_case.symbols = private_fields
+dotnet_naming_rule.private_fields_should_be_camel_case.style = camel_case_underscore_prefix
+dotnet_naming_rule.private_fields_should_be_camel_case.severity = warning
+dotnet_naming_symbols.private_fields.applicable_kinds = field
+dotnet_naming_symbols.private_fields.applicable_accessibilities = private
+dotnet_naming_style.camel_case_underscore_prefix.capitalization = camel_case
+dotnet_naming_style.camel_case_underscore_prefix.required_prefix = _
 
-csharp_style_var_for_built_in_types = true:suggestion
-dotnet_diagnostic.SA1633.severity = none
+# StyleCop Rules - disable non-critical rules
+dotnet_diagnostic.SA1633.severity = none  # File header (not critical)
+dotnet_diagnostic.SA1101.severity = none  # Prefix local calls with this (we want clean code)
+dotnet_diagnostic.SA1122.severity = none  # Use string.Empty ("" is acceptable)
+dotnet_diagnostic.SA1202.severity = none  # Member ordering (too strict)
+dotnet_diagnostic.SA1203.severity = none  # Constant field ordering (too strict)
+dotnet_diagnostic.SA1204.severity = none  # Static member ordering (too strict)
+
+# Analyzer Rules - disable non-critical rules
+dotnet_diagnostic.CA1305.severity = none  # CultureInfo for string.Format (too strict)
+dotnet_diagnostic.CA1707.severity = none  # Identifiers should not contain underscores (required for test naming)
+dotnet_diagnostic.CA1848.severity = none  # LoggerMessage delegates (too strict)
+dotnet_diagnostic.CA1859.severity = none  # Concrete types (too strict)
+dotnet_diagnostic.CA1863.severity = none  # CompositeFormat caching (too strict)
+
+# StyleCop Rules - disable underscore naming for private fields
+dotnet_diagnostic.SA1309.severity = none  # Field naming (underscore is common convention)
+dotnet_diagnostic.SA1513.severity = none  # Closing brace blank line (not critical)
+
+[*.{json,yml,yaml}]
+indent_size = 2
+
+[*.md]
+trim_trailing_whitespace = false

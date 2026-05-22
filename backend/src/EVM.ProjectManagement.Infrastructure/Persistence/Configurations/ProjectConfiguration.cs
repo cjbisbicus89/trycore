@@ -8,15 +8,16 @@ public sealed class ProjectConfiguration : IEntityTypeConfiguration<Project>
 {
     public void Configure(EntityTypeBuilder<Project> builder)
     {
+        ArgumentNullException.ThrowIfNull(builder);
         builder.HasKey(p => p.Id);
 
         builder.Property(p => p.Name)
             .IsRequired()
-            .HasMaxLength(200);
+            .HasMaxLength(ProjectConstants.MaxNameLength);
 
         builder.Property(p => p.Description)
             .IsRequired()
-            .HasMaxLength(1000);
+            .HasMaxLength(ProjectConstants.MaxDescriptionLength);
 
         builder.Property(p => p.CreatedAt)
             .IsRequired()
@@ -25,12 +26,10 @@ public sealed class ProjectConfiguration : IEntityTypeConfiguration<Project>
         builder.Property(p => p.RowVersion)
             .IsRowVersion();
 
-        // Índice para ordenamiento por fecha de creación
         builder.HasIndex(p => p.CreatedAt)
             .IsDescending()
             .HasDatabaseName("IX_Projects_CreatedAt");
 
-        // Relación 1:N con Activity
         builder.HasMany(p => p.Activities)
             .WithOne()
             .HasForeignKey(a => a.ProjectId)

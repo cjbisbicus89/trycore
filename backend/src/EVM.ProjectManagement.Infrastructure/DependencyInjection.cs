@@ -12,15 +12,12 @@ public static class DependencyInjection
 {
     public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
     {
-        // Registrar DbContext con PostgreSQL
         services.AddDbContext<AppDbContext>(options =>
             options.UseNpgsql(configuration.GetConnectionString("Default")));
 
-        // Registrar repositorios
         services.AddScoped<IProjectRepository, ProjectRepository>();
         services.AddScoped<IActivityRepository, ActivityRepository>();
 
-        // Registrar servicios de dominio
         services.AddSingleton<IEVMCalculator, EVMCalculationService>();
 
         return services;

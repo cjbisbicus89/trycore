@@ -1,287 +1,335 @@
 namespace EVM.ProjectManagement.UnitTests.Domain;
 
 using EVM.ProjectManagement.Domain.Services;
+using FluentAssertions;
 using Xunit;
 
 public sealed class EVMCalculationServiceTests
 {
-    private readonly EVMCalculationService calculator = new EVMCalculationService();
+    private readonly EVMCalculationService _calculator = new();
 
-    [Fact]
-    public void CalculateCPICorrectoCuandoACMayorQueCero()
+    [Theory]
+    [InlineData(1000, 800, 900, 2000, 0.889)]
+    [InlineData(500, 400, 450, 1000, 0.889)]
+    [InlineData(2000, 1500, 1600, 3000, 0.938)]
+    public void CalculateCPI_WhenActualCostIsGreaterThanZero_ReturnsCorrectValue(
+        decimal plannedValue,
+        decimal earnedValue,
+        decimal actualCost,
+        decimal budgetedCost,
+        decimal expectedCpi)
     {
-        // Arrange
-        var plannedValue = 1000;
-        var earnedValue = 800;
-        var actualCost = 900;
-        var budgetedCost = 2000;
-
         // Act
-        var indicators = this.calculator.Calculate(plannedValue, earnedValue, actualCost, budgetedCost);
+        var indicators = _calculator.Calculate(plannedValue, earnedValue, actualCost, budgetedCost);
 
         // Assert
-        Assert.Equal(0.889m, Math.Round(indicators.CostPerformanceIndex!.Value, 3));
+        indicators.CostPerformanceIndex.Should().NotBeNull();
+        indicators.CostPerformanceIndex.Should().BeApproximately(expectedCpi, 0.001m);
     }
 
-    [Fact]
-    public void CalculateCPINullCuandoACEsCero()
+    [Theory]
+    [InlineData(1000, 800, 0, 2000)]
+    [InlineData(500, 400, 0, 1000)]
+    public void CalculateCPI_WhenActualCostIsZero_ReturnsNull(
+        decimal plannedValue,
+        decimal earnedValue,
+        decimal actualCost,
+        decimal budgetedCost)
     {
-        // Arrange
-        var plannedValue = 1000;
-        var earnedValue = 800;
-        var actualCost = 0;
-        var budgetedCost = 2000;
-
         // Act
-        var indicators = this.calculator.Calculate(plannedValue, earnedValue, actualCost, budgetedCost);
+        var indicators = _calculator.Calculate(plannedValue, earnedValue, actualCost, budgetedCost);
 
         // Assert
-        Assert.Null(indicators.CostPerformanceIndex);
+        indicators.CostPerformanceIndex.Should().BeNull();
     }
 
-    [Fact]
-    public void CalculateSPICorrectoCuandoPVMayorQueCero()
+    [Theory]
+    [InlineData(1000, 800, 900, 2000, 0.8)]
+    [InlineData(500, 400, 450, 1000, 0.8)]
+    [InlineData(2000, 1800, 1600, 3000, 0.9)]
+    public void CalculateSPI_WhenPlannedValueIsGreaterThanZero_ReturnsCorrectValue(
+        decimal plannedValue,
+        decimal earnedValue,
+        decimal actualCost,
+        decimal budgetedCost,
+        decimal expectedSpi)
     {
-        // Arrange
-        var plannedValue = 1000;
-        var earnedValue = 800;
-        var actualCost = 900;
-        var budgetedCost = 2000;
-
         // Act
-        var indicators = this.calculator.Calculate(plannedValue, earnedValue, actualCost, budgetedCost);
+        var indicators = _calculator.Calculate(plannedValue, earnedValue, actualCost, budgetedCost);
 
         // Assert
-        Assert.Equal(0.8m, indicators.SchedulePerformanceIndex);
+        indicators.SchedulePerformanceIndex.Should().NotBeNull();
+        indicators.SchedulePerformanceIndex.Should().Be(expectedSpi);
     }
 
-    [Fact]
-    public void CalculateSPINullCuandoPVEsCero()
+    [Theory]
+    [InlineData(0, 800, 900, 2000)]
+    [InlineData(0, 400, 450, 1000)]
+    public void CalculateSPI_WhenPlannedValueIsZero_ReturnsNull(
+        decimal plannedValue,
+        decimal earnedValue,
+        decimal actualCost,
+        decimal budgetedCost)
     {
-        // Arrange
-        var plannedValue = 0;
-        var earnedValue = 800;
-        var actualCost = 900;
-        var budgetedCost = 2000;
-
         // Act
-        var indicators = this.calculator.Calculate(plannedValue, earnedValue, actualCost, budgetedCost);
+        var indicators = _calculator.Calculate(plannedValue, earnedValue, actualCost, budgetedCost);
 
         // Assert
-        Assert.Null(indicators.SchedulePerformanceIndex);
+        indicators.SchedulePerformanceIndex.Should().BeNull();
     }
 
-    [Fact]
-    public void CalculateEACNullCuandoCPINull()
+    [Theory]
+    [InlineData(1000, 800, 0, 2000)]
+    [InlineData(500, 400, 0, 1000)]
+    public void CalculateEAC_WhenCPIIsNull_ReturnsNull(
+        decimal plannedValue,
+        decimal earnedValue,
+        decimal actualCost,
+        decimal budgetedCost)
     {
-        // Arrange
-        var plannedValue = 1000;
-        var earnedValue = 800;
-        var actualCost = 0;
-        var budgetedCost = 2000;
-
         // Act
-        var indicators = this.calculator.Calculate(plannedValue, earnedValue, actualCost, budgetedCost);
+        var indicators = _calculator.Calculate(plannedValue, earnedValue, actualCost, budgetedCost);
 
         // Assert
-        Assert.Null(indicators.EstimateAtCompletion);
+        indicators.EstimateAtCompletion.Should().BeNull();
+        indicators.VarianceAtCompletion.Should().BeNull();
     }
 
-    [Fact]
-    public void CalculateEACNullCuandoCPICero()
+    [Theory]
+    [InlineData(1000, 0, 1000, 2000)]
+    [InlineData(500, 0, 500, 1000)]
+    public void CalculateEAC_WhenCPIIsZero_ReturnsNull(
+        decimal plannedValue,
+        decimal earnedValue,
+        decimal actualCost,
+        decimal budgetedCost)
     {
-        // Arrange
-        var plannedValue = 1000;
-        var earnedValue = 0;
-        var actualCost = 1000;
-        var budgetedCost = 2000;
-
         // Act
-        var indicators = this.calculator.Calculate(plannedValue, earnedValue, actualCost, budgetedCost);
+        var indicators = _calculator.Calculate(plannedValue, earnedValue, actualCost, budgetedCost);
 
         // Assert
-        Assert.Null(indicators.EstimateAtCompletion);
+        indicators.EstimateAtCompletion.Should().BeNull();
+        indicators.VarianceAtCompletion.Should().BeNull();
     }
 
-    [Fact]
-    public void CalculateCostStatusOnBudgetCuandoCPIEsUno()
+    [Theory]
+    [InlineData(1000, 1000, 1000, 2000, "On Budget")]
+    [InlineData(500, 500, 500, 1000, "On Budget")]
+    public void CalculateCostStatus_WhenCPIIsOne_ReturnsOnBudget(
+        decimal plannedValue,
+        decimal earnedValue,
+        decimal actualCost,
+        decimal budgetedCost,
+        string expectedStatus)
     {
-        // Arrange
-        var plannedValue = 1000;
-        var earnedValue = 1000;
-        var actualCost = 1000;
-        var budgetedCost = 2000;
-
         // Act
-        var indicators = this.calculator.Calculate(plannedValue, earnedValue, actualCost, budgetedCost);
+        var indicators = _calculator.Calculate(plannedValue, earnedValue, actualCost, budgetedCost);
 
         // Assert
-        Assert.Equal(EVMStatus.OnBudget, indicators.CostStatus);
+        indicators.CostStatus.Should().Be(expectedStatus);
     }
 
-    [Fact]
-    public void CalculateCostStatusUnderBudgetCuandoCPIMayorQueUno()
+    [Theory]
+    [InlineData(1000, 900, 800, 2000, "Under Budget")]
+    [InlineData(500, 450, 400, 1000, "Under Budget")]
+    public void CalculateCostStatus_WhenCPIIsGreaterThanOne_ReturnsUnderBudget(
+        decimal plannedValue,
+        decimal earnedValue,
+        decimal actualCost,
+        decimal budgetedCost,
+        string expectedStatus)
     {
-        // Arrange
-        var plannedValue = 1000;
-        var earnedValue = 900;
-        var actualCost = 800;
-        var budgetedCost = 2000;
-
         // Act
-        var indicators = this.calculator.Calculate(plannedValue, earnedValue, actualCost, budgetedCost);
+        var indicators = _calculator.Calculate(plannedValue, earnedValue, actualCost, budgetedCost);
 
         // Assert
-        Assert.Equal(EVMStatus.UnderBudget, indicators.CostStatus);
+        indicators.CostStatus.Should().Be(expectedStatus);
     }
 
-    [Fact]
-    public void CalculateCostStatusOverBudgetCuandoCPIMenorQueUno()
+    [Theory]
+    [InlineData(1000, 800, 900, 2000, "Over Budget")]
+    [InlineData(500, 400, 450, 1000, "Over Budget")]
+    public void CalculateCostStatus_WhenCPIIsLessThanOne_ReturnsOverBudget(
+        decimal plannedValue,
+        decimal earnedValue,
+        decimal actualCost,
+        decimal budgetedCost,
+        string expectedStatus)
     {
-        // Arrange
-        var plannedValue = 1000;
-        var earnedValue = 800;
-        var actualCost = 900;
-        var budgetedCost = 2000;
-
         // Act
-        var indicators = this.calculator.Calculate(plannedValue, earnedValue, actualCost, budgetedCost);
+        var indicators = _calculator.Calculate(plannedValue, earnedValue, actualCost, budgetedCost);
 
         // Assert
-        Assert.Equal(EVMStatus.OverBudget, indicators.CostStatus);
+        indicators.CostStatus.Should().Be(expectedStatus);
     }
 
-    [Fact]
-    public void CalculateScheduleStatusOnScheduleCuandoSPIEsUno()
+    [Theory]
+    [InlineData(1000, 1000, 900, 2000, "On Schedule")]
+    [InlineData(500, 500, 450, 1000, "On Schedule")]
+    public void CalculateScheduleStatus_WhenSPIIsOne_ReturnsOnSchedule(
+        decimal plannedValue,
+        decimal earnedValue,
+        decimal actualCost,
+        decimal budgetedCost,
+        string expectedStatus)
     {
-        // Arrange
-        var plannedValue = 1000;
-        var earnedValue = 1000;
-        var actualCost = 900;
-        var budgetedCost = 2000;
-
         // Act
-        var indicators = this.calculator.Calculate(plannedValue, earnedValue, actualCost, budgetedCost);
+        var indicators = _calculator.Calculate(plannedValue, earnedValue, actualCost, budgetedCost);
 
         // Assert
-        Assert.Equal(EVMStatus.OnSchedule, indicators.ScheduleStatus);
+        indicators.ScheduleStatus.Should().Be(expectedStatus);
     }
 
-    [Fact]
-    public void CalculateScheduleStatusAheadOfScheduleCuandoSPIMayorQueUno()
+    [Theory]
+    [InlineData(1000, 1200, 900, 2000, "Ahead of Schedule")]
+    [InlineData(500, 600, 450, 1000, "Ahead of Schedule")]
+    public void CalculateScheduleStatus_WhenSPIIsGreaterThanOne_ReturnsAheadOfSchedule(
+        decimal plannedValue,
+        decimal earnedValue,
+        decimal actualCost,
+        decimal budgetedCost,
+        string expectedStatus)
     {
-        // Arrange
-        var plannedValue = 1000;
-        var earnedValue = 1200;
-        var actualCost = 900;
-        var budgetedCost = 2000;
-
         // Act
-        var indicators = this.calculator.Calculate(plannedValue, earnedValue, actualCost, budgetedCost);
+        var indicators = _calculator.Calculate(plannedValue, earnedValue, actualCost, budgetedCost);
 
         // Assert
-        Assert.Equal(EVMStatus.AheadOfSchedule, indicators.ScheduleStatus);
+        indicators.ScheduleStatus.Should().Be(expectedStatus);
     }
 
-    [Fact]
-    public void CalculateScheduleStatusBehindScheduleCuandoSPIMenorQueUno()
+    [Theory]
+    [InlineData(1000, 800, 900, 2000, "Behind Schedule")]
+    [InlineData(500, 400, 450, 1000, "Behind Schedule")]
+    public void CalculateScheduleStatus_WhenSPIIsLessThanOne_ReturnsBehindSchedule(
+        decimal plannedValue,
+        decimal earnedValue,
+        decimal actualCost,
+        decimal budgetedCost,
+        string expectedStatus)
     {
-        // Arrange
-        var plannedValue = 1000;
-        var earnedValue = 800;
-        var actualCost = 900;
-        var budgetedCost = 2000;
-
         // Act
-        var indicators = this.calculator.Calculate(plannedValue, earnedValue, actualCost, budgetedCost);
+        var indicators = _calculator.Calculate(plannedValue, earnedValue, actualCost, budgetedCost);
 
         // Assert
-        Assert.Equal(EVMStatus.BehindSchedule, indicators.ScheduleStatus);
+        indicators.ScheduleStatus.Should().Be(expectedStatus);
     }
 
-    [Fact]
-    public void CalculateCVCorrecto()
+    [Theory]
+    [InlineData(1000, 800, 900, 2000, -100)]
+    [InlineData(500, 400, 450, 1000, -50)]
+    [InlineData(1000, 1100, 900, 2000, 200)]
+    public void CalculateCV_WhenCalculated_ReturnsCorrectValue(
+        decimal plannedValue,
+        decimal earnedValue,
+        decimal actualCost,
+        decimal budgetedCost,
+        decimal expectedCv)
     {
-        // Arrange
-        var plannedValue = 1000;
-        var earnedValue = 800;
-        var actualCost = 900;
-        var budgetedCost = 2000;
-
         // Act
-        var indicators = this.calculator.Calculate(plannedValue, earnedValue, actualCost, budgetedCost);
+        var indicators = _calculator.Calculate(plannedValue, earnedValue, actualCost, budgetedCost);
 
         // Assert
-        Assert.Equal(-100, indicators.CostVariance);
+        indicators.CostVariance.Should().Be(expectedCv);
     }
 
-    [Fact]
-    public void CalculateSVCorrecto()
+    [Theory]
+    [InlineData(1000, 800, 900, 2000, -200)]
+    [InlineData(500, 400, 450, 1000, -100)]
+    [InlineData(1000, 1200, 900, 2000, 200)]
+    public void CalculateSV_WhenCalculated_ReturnsCorrectValue(
+        decimal plannedValue,
+        decimal earnedValue,
+        decimal actualCost,
+        decimal budgetedCost,
+        decimal expectedSv)
     {
-        // Arrange
-        var plannedValue = 1000;
-        var earnedValue = 800;
-        var actualCost = 900;
-        var budgetedCost = 2000;
-
         // Act
-        var indicators = this.calculator.Calculate(plannedValue, earnedValue, actualCost, budgetedCost);
+        var indicators = _calculator.Calculate(plannedValue, earnedValue, actualCost, budgetedCost);
 
         // Assert
-        Assert.Equal(-200, indicators.ScheduleVariance);
+        indicators.ScheduleVariance.Should().Be(expectedSv);
     }
 
-    [Fact]
-    public void CalculateEACAndVACCorrecto()
+    [Theory]
+    [InlineData(1000, 800, 800, 2000, 1.0, 2000.0, 0.0)]
+    [InlineData(500, 400, 400, 1000, 1.0, 1000.0, 0.0)]
+    public void CalculateEACAndVAC_WhenCalculated_ReturnsCorrectValues(
+        decimal plannedValue,
+        decimal earnedValue,
+        decimal actualCost,
+        decimal budgetedCost,
+        decimal expectedCpi,
+        decimal expectedEac,
+        decimal expectedVac)
     {
-        // Arrange
-        var plannedValue = 1000;
-        var earnedValue = 800;
-        var actualCost = 800;
-        var budgetedCost = 2000;
-
         // Act
-        var indicators = this.calculator.Calculate(plannedValue, earnedValue, actualCost, budgetedCost);
+        var indicators = _calculator.Calculate(plannedValue, earnedValue, actualCost, budgetedCost);
 
         // Assert
-        Assert.Equal(1.0m, indicators.CostPerformanceIndex);
-        Assert.Equal(2000.0m, indicators.EstimateAtCompletion);
-        Assert.Equal(0.0m, indicators.VarianceAtCompletion);
+        indicators.CostPerformanceIndex.Should().Be(expectedCpi);
+        indicators.EstimateAtCompletion.Should().Be(expectedEac);
+        indicators.VarianceAtCompletion.Should().Be(expectedVac);
     }
 
-    [Fact]
-    public void CalculateEarnedValueZeroCuandoAvanceRealEsCero()
+    [Theory]
+    [InlineData(1000, 0, 500, 2000, 0, -500, -1000)]
+    [InlineData(500, 0, 250, 1000, 0, -250, -500)]
+    public void CalculateEarnedValue_WhenActualProgressIsZero_ReturnsZeroAndCalculatesCVAndSV(
+        decimal plannedValue,
+        decimal earnedValue,
+        decimal actualCost,
+        decimal budgetedCost,
+        decimal expectedEv,
+        decimal expectedCv,
+        decimal expectedSv)
     {
-        // Arrange
-        var plannedValue = 1000;
-        var earnedValue = 0;
-        var actualCost = 500;
-        var budgetedCost = 2000;
-
         // Act
-        var indicators = this.calculator.Calculate(plannedValue, earnedValue, actualCost, budgetedCost);
+        var indicators = _calculator.Calculate(plannedValue, earnedValue, actualCost, budgetedCost);
 
         // Assert
-        Assert.Equal(0, indicators.EarnedValue);
-        Assert.Equal(EVMStatus.OverBudget, indicators.CostStatus);
+        indicators.EarnedValue.Should().Be(expectedEv);
+        indicators.CostVariance.Should().Be(expectedCv);
+        indicators.ScheduleVariance.Should().Be(expectedSv);
+        indicators.CostStatus.Should().Be(EVMStatus.SobrePresupuesto);
     }
 
-    [Fact]
-    public void CalculateAllStatusNotApplicableCuandoNoHayValores()
+    [Theory]
+    [InlineData(0, 0, 0, 0)]
+    [InlineData(0, 0, 0, 1000)]
+    public void CalculateAllStatus_WhenNoValues_ReturnsNotApplicable(
+        decimal plannedValue,
+        decimal earnedValue,
+        decimal actualCost,
+        decimal budgetedCost)
     {
-        // Arrange
-        var plannedValue = 0m;
-        var earnedValue = 0m;
-        var actualCost = 0m;
-        var budgetedCost = 0m;
-
         // Act
-        var indicators = this.calculator.Calculate(plannedValue, earnedValue, actualCost, budgetedCost);
+        var indicators = _calculator.Calculate(plannedValue, earnedValue, actualCost, budgetedCost);
 
         // Assert
-        Assert.Null(indicators.CostPerformanceIndex);
-        Assert.Null(indicators.SchedulePerformanceIndex);
-        Assert.Equal(EVMStatus.CostNotApplicable, indicators.CostStatus);
-        Assert.Equal(EVMStatus.ScheduleNotApplicable, indicators.ScheduleStatus);
+        indicators.CostPerformanceIndex.Should().BeNull();
+        indicators.SchedulePerformanceIndex.Should().BeNull();
+        indicators.EstimateAtCompletion.Should().BeNull();
+        indicators.VarianceAtCompletion.Should().BeNull();
+        indicators.CostStatus.Should().Be(EVMStatus.CostoNoAplicable);
+        indicators.ScheduleStatus.Should().Be(EVMStatus.CronogramaNoAplicable);
+    }
+
+    [Theory]
+    [InlineData(0, 0, 500, 0)]
+    [InlineData(0, 0, 1000, 0)]
+    public void Calculate_WhenBACIsZero_ReturnsZeroForEvAndPvButNullForEacAndVac(
+        decimal plannedValue,
+        decimal earnedValue,
+        decimal actualCost,
+        decimal budgetedCost)
+    {
+        // Act
+        var indicators = _calculator.Calculate(plannedValue, earnedValue, actualCost, budgetedCost);
+
+        // Assert
+        indicators.EarnedValue.Should().Be(0);
+        indicators.PlannedValue.Should().Be(0);
+        indicators.EstimateAtCompletion.Should().BeNull();
+        indicators.VarianceAtCompletion.Should().BeNull();
     }
 }

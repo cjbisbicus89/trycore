@@ -1,13 +1,11 @@
 namespace EVM.ProjectManagement.Application.Activities.Validators;
 
 using EVM.ProjectManagement.Application.Activities.DTOs;
+using EVM.ProjectManagement.Domain.Entities;
 using FluentValidation;
 
 public sealed class CreateActivityRequestValidator : AbstractValidator<CreateActivityRequest>
 {
-    private const decimal MinPercentage = 0m;
-    private const decimal MaxPercentage = 100m;
-
     public CreateActivityRequestValidator()
     {
         this.RuleFor(x => x.ProjectId)
@@ -15,18 +13,18 @@ public sealed class CreateActivityRequestValidator : AbstractValidator<CreateAct
 
         this.RuleFor(x => x.Name)
             .NotEmpty()
-            .MaximumLength(200);
+            .MaximumLength(ActivityConstants.MaxNameLength);
 
         this.RuleFor(x => x.BudgetedCost)
-            .GreaterThan(0);
+            .GreaterThan(ActivityConstants.MinBudgetedCost);
 
         this.RuleFor(x => x.PlannedPercentage)
-            .InclusiveBetween(MinPercentage, MaxPercentage);
+            .InclusiveBetween(ActivityConstants.MinPercentage, ActivityConstants.MaxPercentage);
 
         this.RuleFor(x => x.ActualPercentage)
-            .InclusiveBetween(MinPercentage, MaxPercentage);
+            .InclusiveBetween(ActivityConstants.MinPercentage, ActivityConstants.MaxPercentage);
 
         this.RuleFor(x => x.ActualCost)
-            .GreaterThanOrEqualTo(0);
+            .GreaterThanOrEqualTo(ActivityConstants.MinActualCost);
     }
 }

@@ -14,29 +14,29 @@ public sealed class ActivityRepository : IActivityRepository
     }
 
     public async Task<Activity?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
-        => await this.context.Activities.FindAsync([id], cancellationToken);
+        => await this.context.Activities.FindAsync([id], cancellationToken).ConfigureAwait(false);
 
     public async Task<IReadOnlyList<Activity>> GetByProjectIdAsync(Guid projectId, CancellationToken cancellationToken = default)
     {
-        var activities = await this.context.Activities.Where(a => a.ProjectId == projectId).ToListAsync(cancellationToken);
+        var activities = await this.context.Activities.Where(a => a.ProjectId == projectId).ToListAsync(cancellationToken).ConfigureAwait(false);
         return activities.AsReadOnly();
     }
 
     public async Task AddAsync(Activity activity, CancellationToken cancellationToken = default)
     {
-        await this.context.Activities.AddAsync(activity, cancellationToken);
-        await this.context.SaveChangesAsync(cancellationToken);
+        await this.context.Activities.AddAsync(activity, cancellationToken).ConfigureAwait(false);
+        await this.context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
     }
 
     public async Task UpdateAsync(Activity activity, CancellationToken cancellationToken = default)
     {
         this.context.Activities.Update(activity);
-        await this.context.SaveChangesAsync(cancellationToken);
+        await this.context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
     }
 
     public async Task DeleteAsync(Activity activity, CancellationToken cancellationToken = default)
     {
         this.context.Activities.Remove(activity);
-        await this.context.SaveChangesAsync(cancellationToken);
+        await this.context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
     }
 }

@@ -1,6 +1,7 @@
 namespace EVM.ProjectManagement.Application.Projects.Validators;
 
 using EVM.ProjectManagement.Application.Projects.DTOs;
+using EVM.ProjectManagement.Domain.Entities;
 using FluentValidation;
 
 public sealed class CreateProjectRequestValidator : AbstractValidator<CreateProjectRequest>
@@ -9,10 +10,10 @@ public sealed class CreateProjectRequestValidator : AbstractValidator<CreateProj
     {
         this.RuleFor(x => x.Name)
             .NotEmpty()
-            .MaximumLength(200);
+            .MaximumLength(ProjectConstants.MaxNameLength);
 
         this.RuleFor(x => x.Description)
             .NotEmpty()
-            .MaximumLength(1000);
+            .MaximumLength(ProjectConstants.MaxDescriptionLength);
     }
 }

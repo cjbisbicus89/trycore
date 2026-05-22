@@ -25,6 +25,6 @@ public sealed record EVMIndicators(
         SchedulePerformanceIndex: null,
         EstimateAtCompletion: null,
         VarianceAtCompletion: null,
-        CostStatus: EVMStatus.CostNotApplicable,
-        ScheduleStatus: EVMStatus.ScheduleNotApplicable);
+        CostStatus: EVMStatus.CostoNoAplicable,
+        ScheduleStatus: EVMStatus.CronogramaNoAplicable);
 }

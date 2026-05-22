@@ -18,31 +18,23 @@ public sealed class Project
 
     public DateTime CreatedAt { get; private set; }
 
-    public byte[] RowVersion { get; private set; } = Array.Empty<byte>();
+#pragma warning disable CA1819
+    public byte[] RowVersion { get; private set; } = [];
+#pragma warning restore CA1819
 
-    public IReadOnlyCollection<Activity> Activities => this.activities.AsReadOnly();
+    public IReadOnlyCollection<Activity> Activities => activities.AsReadOnly();
 
-    // Propiedades calculadas sobre la colección de actividades
-    public decimal TotalPlannedValue => this.activities.Sum(a => a.PlannedValue);
+    public decimal TotalPlannedValue => activities.Sum(a => a.PlannedValue);
 
-    public decimal TotalEarnedValue => this.activities.Sum(a => a.EarnedValue);
+    public decimal TotalEarnedValue => activities.Sum(a => a.EarnedValue);
 
-    public decimal TotalActualCost => this.activities.Sum(a => a.ActualCost);
+    public decimal TotalActualCost => activities.Sum(a => a.ActualCost);
 
-    public decimal TotalBudgetedCost => this.activities.Sum(a => a.BudgetedCost);
+    public decimal TotalBudgetedCost => activities.Sum(a => a.BudgetedCost);
 
     public static Project Create(string name, string description)
     {
-        // Validación de invariantes
-        if (string.IsNullOrWhiteSpace(name))
-        {
-            throw new DomainException("Name is required");
-        }
-
-        if (string.IsNullOrWhiteSpace(description))
-        {
-            throw new DomainException("Description is required");
-        }
+        ValidateProjectData(name, description);
 
         return new Project
         {
@@ -55,24 +47,28 @@ public sealed class Project
 
     public void Update(string name, string description)
     {
-        // Validación de invariantes
-        if (string.IsNullOrWhiteSpace(name))
-        {
-            throw new DomainException("Name is required");
-        }
+        ValidateProjectData(name, description);
 
-        if (string.IsNullOrWhiteSpace(description))
-        {
-            throw new DomainException("Description is required");
-        }
-
-        this.Name = name;
-        this.Description = description;
+        Name = name;
+        Description = description;
     }
 
     public void SetActivities(IEnumerable<Activity> activities)
     {
         this.activities.Clear();
         this.activities.AddRange(activities);
+    }
+
+    private static void ValidateProjectData(string name, string description)
+    {
+        if (string.IsNullOrWhiteSpace(name))
+        {
+            throw new DomainException(ProjectErrors.NameIsRequired);
+        }
+
+        if (string.IsNullOrWhiteSpace(description))
+        {
+            throw new DomainException(ProjectErrors.DescriptionIsRequired);
+        }
     }
 }

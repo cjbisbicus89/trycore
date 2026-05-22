@@ -10,10 +10,13 @@ public sealed class AppDbContext : DbContext
     {
     }
 
-    public DbSet<Project> Projects => this.Set<Project>();
+    public DbSet<Project> Projects => Set<Project>();
 
-    public DbSet<Activity> Activities => this.Set<Activity>();
+    public DbSet<Activity> Activities => Set<Activity>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
-        => modelBuilder.ApplyConfigurationsFromAssembly(typeof(AppDbContext).Assembly);
+    {
+        ArgumentNullException.ThrowIfNull(modelBuilder);
+        modelBuilder.ApplyConfigurationsFromAssembly(typeof(AppDbContext).Assembly);
+    }
 }

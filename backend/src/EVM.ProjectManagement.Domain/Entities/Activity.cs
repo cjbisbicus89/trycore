@@ -4,10 +4,6 @@ using EVM.ProjectManagement.Domain.Exceptions;
 
 public sealed class Activity
 {
-    private const decimal PercentageDivisor = 100m;
-    private const decimal MinPercentage = 0m;
-    private const decimal MaxPercentage = 100m;
-
     private Activity()
     {
     }
@@ -26,12 +22,13 @@ public sealed class Activity
 
     public decimal ActualCost { get; private set; }
 
-    public byte[] RowVersion { get; private set; } = Array.Empty<byte>();
+#pragma warning disable CA1819
+    public byte[] RowVersion { get; private set; } = [];
+#pragma warning restore CA1819
 
-    // Propiedades calculadas
-    public decimal PlannedValue => this.BudgetedCost * (this.PlannedPercentage / PercentageDivisor);
+    public decimal PlannedValue => BudgetedCost * (PlannedPercentage / ActivityConstants.PercentageDivisor);
 
-    public decimal EarnedValue => this.BudgetedCost * (this.ActualPercentage / PercentageDivisor);
+    public decimal EarnedValue => BudgetedCost * (ActualPercentage / ActivityConstants.PercentageDivisor);
 
     public static Activity Create(
         Guid projectId,
@@ -41,31 +38,7 @@ public sealed class Activity
         decimal actualPercentage,
         decimal actualCost)
     {
-        // Validación de invariantes
-        if (string.IsNullOrWhiteSpace(name))
-        {
-            throw new DomainException("Name is required");
-        }
-
-        if (budgetedCost <= 0)
-        {
-            throw new DomainException("BudgetedCost must be greater than zero");
-        }
-
-        if (plannedPercentage < MinPercentage || plannedPercentage > MaxPercentage)
-        {
-            throw new DomainException($"PlannedPercentage must be between {MinPercentage} and {MaxPercentage}");
-        }
-
-        if (actualPercentage < MinPercentage || actualPercentage > MaxPercentage)
-        {
-            throw new DomainException($"ActualPercentage must be between {MinPercentage} and {MaxPercentage}");
-        }
-
-        if (actualCost < 0)
-        {
-            throw new DomainException("ActualCost must be non-negative");
-        }
+        ValidateActivityData(name, budgetedCost, plannedPercentage, actualPercentage, actualCost);
 
         return new Activity
         {
@@ -86,36 +59,45 @@ public sealed class Activity
         decimal actualPercentage,
         decimal actualCost)
     {
-        // Validación de invariantes
+        ValidateActivityData(name, budgetedCost, plannedPercentage, actualPercentage, actualCost);
+
+        Name = name;
+        BudgetedCost = budgetedCost;
+        PlannedPercentage = plannedPercentage;
+        ActualPercentage = actualPercentage;
+        ActualCost = actualCost;
+    }
+
+    private static void ValidateActivityData(
+        string name,
+        decimal budgetedCost,
+        decimal plannedPercentage,
+        decimal actualPercentage,
+        decimal actualCost)
+    {
         if (string.IsNullOrWhiteSpace(name))
         {
-            throw new DomainException("Name is required");
+            throw new DomainException(ActivityErrors.NameIsRequired);
         }
 
-        if (budgetedCost <= 0)
+        if (budgetedCost < ActivityConstants.MinBudgetedCost)
         {
-            throw new DomainException("BudgetedCost must be greater than zero");
+            throw new DomainException(ActivityErrors.BudgetedCostMustBePositive);
         }
 
-        if (plannedPercentage < MinPercentage || plannedPercentage > MaxPercentage)
+        if (plannedPercentage < ActivityConstants.MinPercentage || plannedPercentage > ActivityConstants.MaxPercentage)
         {
-            throw new DomainException($"PlannedPercentage must be between {MinPercentage} and {MaxPercentage}");
+            throw new DomainException(ActivityErrors.PlannedPercentageExceedsMaximum);
         }
 
-        if (actualPercentage < MinPercentage || actualPercentage > MaxPercentage)
+        if (actualPercentage < ActivityConstants.MinPercentage || actualPercentage > ActivityConstants.MaxPercentage)
         {
-            throw new DomainException($"ActualPercentage must be between {MinPercentage} and {MaxPercentage}");
+            throw new DomainException(ActivityErrors.ActualPercentageExceedsMaximum);
         }
 
-        if (actualCost < 0)
+        if (actualCost < ActivityConstants.MinActualCost)
         {
-            throw new DomainException("ActualCost must be non-negative");
+            throw new DomainException(ActivityErrors.ActualCostCannotBeNegative);
         }
-
-        this.Name = name;
-        this.BudgetedCost = budgetedCost;
-        this.PlannedPercentage = plannedPercentage;
-        this.ActualPercentage = actualPercentage;
-        this.ActualCost = actualCost;
     }
 }

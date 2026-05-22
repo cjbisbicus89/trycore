@@ -6,87 +6,108 @@ using Microsoft.AspNetCore.Mvc;
 
 [ApiController]
 [Route("api/[controller]")]
+[Produces("application/json")]
 public sealed class ProjectsController : ControllerBase
 {
-    private readonly IProjectService projectService;
+    private readonly IProjectService _projectService;
 
     public ProjectsController(IProjectService projectService)
     {
-        this.projectService = projectService;
+        _projectService = projectService;
     }
 
     /// <summary>
-    /// Obtener todos los proyectos.
+    /// Obtiene todos los proyectos registrados en el sistema.
     /// </summary>
-    /// <param name="cancellationToken">Token de cancelación.</param>
-    /// <returns>Lista de todos los proyectos.</returns>
+    /// <param name="cancellationToken">Token de cancelación para la operación asíncrona.</param>
+    /// <returns>Lista de todos los proyectos con sus datos básicos.</returns>
+    /// <response code="200">Retorna la lista de proyectos exitosamente.</response>
+    /// <response code="500">Error interno del servidor.</response>
     [HttpGet]
     [ProducesResponseType(typeof(IReadOnlyList<ProjectResponse>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> GetAll(CancellationToken cancellationToken)
     {
-        var projects = await this.projectService.GetAllAsync(cancellationToken);
-        return this.Ok(projects);
+        var projects = await _projectService.GetAllAsync(cancellationToken);
+        return Ok(projects);
     }
 
     /// <summary>
-    /// Obtener un proyecto por ID con sus actividades e indicadores consolidados.
+    /// Obtiene un proyecto específico por su identificador único, incluyendo sus actividades e indicadores EVM consolidados.
     /// </summary>
-    /// <param name="id">ID del proyecto.</param>
-    /// <param name="cancellationToken">Token de cancelación.</param>
-    /// <returns>El proyecto solicitado con sus actividades e indicadores.</returns>
+    /// <param name="id">Identificador único del proyecto (GUID).</param>
+    /// <param name="cancellationToken">Token de cancelación para la operación asíncrona.</param>
+    /// <returns>El proyecto solicitado con todas sus actividades y los indicadores EVM calculados.</returns>
+    /// <response code="200">Retorna el proyecto solicitado.</response>
+    /// <response code="404">El proyecto con el ID especificado no existe.</response>
+    /// <response code="500">Error interno del servidor.</response>
     [HttpGet("{id}")]
     [ProducesResponseType(typeof(ProjectResponse), StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> GetById(Guid id, CancellationToken cancellationToken)
     {
-        var project = await this.projectService.GetByIdAsync(id, cancellationToken);
-        return this.Ok(project);
+        var project = await _projectService.GetByIdAsync(id, cancellationToken);
+        return Ok(project);
     }
 
     /// <summary>
-    /// Crear un nuevo proyecto.
+    /// Crea un nuevo proyecto en el sistema.
     /// </summary>
-    /// <param name="request">Datos del proyecto a crear.</param>
-    /// <param name="cancellationToken">Token de cancelación.</param>
-    /// <returns>El proyecto creado.</returns>
+    /// <param name="request">Datos del proyecto a crear (nombre y descripción).</param>
+    /// <param name="cancellationToken">Token de cancelación para la operación asíncrona.</param>
+    /// <returns>El proyecto creado con su identificador asignado.</returns>
+    /// <response code="201">Proyecto creado exitosamente. Retorna el Location header.</response>
+    /// <response code="400">Los datos de entrada son inválidos (validación fallida).</response>
+    /// <response code="500">Error interno del servidor.</response>
     [HttpPost]
     [ProducesResponseType(typeof(ProjectResponse), StatusCodes.Status201Created)]
-    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> Create([FromBody] CreateProjectRequest request, CancellationToken cancellationToken)
     {
-        var project = await this.projectService.CreateAsync(request, cancellationToken);
-        return this.CreatedAtAction(nameof(this.GetById), new { id = project.Id }, project);
+        var project = await _projectService.CreateAsync(request, cancellationToken);
+        return CreatedAtAction(nameof(GetById), new { id = project.Id }, project);
     }
 
     /// <summary>
-    /// Actualizar un proyecto existente.
+    /// Actualiza los datos de un proyecto existente.
     /// </summary>
-    /// <param name="id">ID del proyecto a actualizar.</param>
-    /// <param name="request">Datos actualizados del proyecto.</param>
-    /// <param name="cancellationToken">Token de cancelación.</param>
-    /// <returns>El proyecto actualizado.</returns>
+    /// <param name="id">Identificador único del proyecto a actualizar.</param>
+    /// <param name="request">Datos actualizados del proyecto (nombre y descripción).</param>
+    /// <param name="cancellationToken">Token de cancelación para la operación asíncrona.</param>
+    /// <returns>El proyecto con los datos actualizados.</returns>
+    /// <response code="200">Proyecto actualizado exitosamente.</response>
+    /// <response code="400">Los datos de entrada son inválidos (validación fallida).</response>
+    /// <response code="404">El proyecto con el ID especificado no existe.</response>
+    /// <response code="500">Error interno del servidor.</response>
     [HttpPut("{id}")]
     [ProducesResponseType(typeof(ProjectResponse), StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
-    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> Update(Guid id, [FromBody] UpdateProjectRequest request, CancellationToken cancellationToken)
     {
-        var project = await this.projectService.UpdateAsync(id, request, cancellationToken);
-        return this.Ok(project);
+        var project = await _projectService.UpdateAsync(id, request, cancellationToken);
+        return Ok(project);
     }
 
     /// <summary>
-    /// Eliminar un proyecto.
+    /// Elimina un proyecto del sistema permanentemente.
     /// </summary>
-    /// <param name="id">ID del proyecto a eliminar.</param>
-    /// <param name="cancellationToken">Token de cancelación.</param>
-    /// <returns>Resultado de la operación.</returns>
+    /// <param name="id">Identificador único del proyecto a eliminar.</param>
+    /// <param name="cancellationToken">Token de cancelación para la operación asíncrona.</param>
+    /// <returns>Resultado de la operación sin contenido (204 No Content).</returns>
+    /// <response code="204">Proyecto eliminado exitosamente. No retorna contenido.</response>
+    /// <response code="404">El proyecto con el ID especificado no existe.</response>
+    /// <response code="500">Error interno del servidor.</response>
     [HttpDelete("{id}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> Delete(Guid id, CancellationToken cancellationToken)
     {
-        await this.projectService.DeleteAsync(id, cancellationToken);
-        return this.NoContent();
+        await _projectService.DeleteAsync(id, cancellationToken);
+        return NoContent();
     }
 }
