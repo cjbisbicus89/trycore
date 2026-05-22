@@ -50,7 +50,7 @@ import type { Activity } from '../../../core/models';
       @apply w-full border-collapse;
     }
     .table th {
-      @apply px-4 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-widest border-b border-slate-200;
+      @apply px-4 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-widest border-b-2 border-slate-200;
     }
     .table td {
       @apply px-4 py-3 text-sm text-slate-900 border-b border-slate-100;

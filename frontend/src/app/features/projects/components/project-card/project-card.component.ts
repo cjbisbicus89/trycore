@@ -32,7 +32,7 @@ import type { Project } from '../../../../core/models';
   `,
   styles: [`
     .card {
-      @apply bg-white shadow-sm border border-slate-100 rounded-lg p-6 cursor-pointer hover:shadow-md transition-shadow;
+      @apply bg-white shadow-sm border border-slate-100 rounded-lg p-6 cursor-pointer hover:shadow-lg hover:border-blue-200 transition-all duration-200;
     }
     .card-header {
       @apply flex justify-between items-start mb-3;

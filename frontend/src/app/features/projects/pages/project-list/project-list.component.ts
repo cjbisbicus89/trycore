@@ -79,10 +79,10 @@ import type { Project } from '../../../../core/models';
       @apply text-3xl font-bold text-slate-900;
     }
     .btn-primary {
-      @apply px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors;
+      @apply px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium;
     }
     .btn-secondary {
-      @apply px-4 py-2 bg-slate-200 text-slate-700 rounded-lg hover:bg-slate-300 transition-colors;
+      @apply px-4 py-2 bg-slate-200 text-slate-700 rounded-lg hover:bg-slate-300 transition-colors font-medium;
     }
     .form-container {
       @apply bg-white shadow-sm border border-slate-100 rounded-lg p-6 mb-8;

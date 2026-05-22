@@ -85,13 +85,13 @@ import type { Project, Activity } from '../../../core/models';
       @apply mb-4 px-4 py-2 bg-slate-200 text-slate-700 rounded-lg hover:bg-slate-300 transition-colors;
     }
     .header-content {
-      @apply bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-lg p-6 shadow-md;
+      @apply bg-gradient-to-r from-blue-600 via-blue-700 to-indigo-700 text-white rounded-lg p-8 shadow-lg;
     }
     .project-name {
-      @apply text-3xl font-bold mb-2;
+      @apply text-4xl font-bold mb-2 tracking-tight;
     }
     .project-description {
-      @apply text-blue-100;
+      @apply text-blue-100 text-lg;
     }
     .indicators-grid {
       @apply grid grid-cols-2 md:grid-cols-4 gap-4 mb-8;
