@@ -14,26 +14,26 @@ public sealed class EVMCalculationService : IEVMCalculator
         var cpi = actualCost > 0 ? earnedValue / actualCost : (decimal?)null;
         var spi = plannedValue > 0 ? earnedValue / plannedValue : (decimal?)null;
 
-        // Cálculo de proyecciones
-        var eac = cpi.HasValue && cpi > 0 ? budgetedCost / cpi : (decimal?)null;
+        // Cálculo de proyecciones con manejo de BAC = 0
+        var eac = (cpi.HasValue && cpi > 0 && budgetedCost > 0) ? budgetedCost / cpi : (decimal?)null;
         var vac = eac.HasValue ? budgetedCost - eac : (decimal?)null;
 
         // Interpretación del estado de costos
         var costStatus = cpi switch
         {
-            > 1 => "Under Budget",
-            < 1 => "Over Budget",
-            1 => "On Budget",
-            _ => "N/A",
+            > 1 => EVMStatus.UnderBudget,
+            < 1 => EVMStatus.OverBudget,
+            1 => EVMStatus.OnBudget,
+            _ => EVMStatus.CostNotApplicable,
         };
 
         // Interpretación del estado del cronograma
         var scheduleStatus = spi switch
         {
-            > 1 => "Ahead of Schedule",
-            < 1 => "Behind Schedule",
-            1 => "On Schedule",
-            _ => "N/A",
+            > 1 => EVMStatus.AheadOfSchedule,
+            < 1 => EVMStatus.BehindSchedule,
+            1 => EVMStatus.OnSchedule,
+            _ => EVMStatus.ScheduleNotApplicable,
         };
 
         return new EVMIndicators(

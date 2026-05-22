@@ -59,4 +59,51 @@ public sealed class ProjectServiceTests
         // Act & Assert
         await Assert.ThrowsAsync<NotFoundException>(() => this.projectService.DeleteAsync(projectId));
     }
+
+    [Fact]
+    public async Task GetByIdAsyncCalculaIndicadoresCuandoProyectoSinActividades()
+    {
+        // Arrange
+        var projectId = Guid.NewGuid();
+        var project = new ProjectBuilder().Build();
+        this.projectRepositoryMock.Setup(x => x.GetWithActivitiesAsync(projectId, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(project);
+        this.evmCalculatorMock.Setup(x => x.Calculate(0, 0, 0, 0))
+            .Returns(new EVM.ProjectManagement.Domain.ValueObjects.EVMIndicators(0, 0, 0, 0, 0, null, null, null, null, "N/A", "N/A"));
+
+        // Act
+        var result = await this.projectService.GetByIdAsync(projectId);
+
+        // Assert
+        Assert.NotNull(result);
+        Assert.Empty(result.Activities);
+    }
+
+    [Fact]
+    public async Task UpdateAsyncLanzaNotFoundExceptionCuandoProyectoNoExiste()
+    {
+        // Arrange
+        var projectId = Guid.NewGuid();
+        var request = new UpdateProjectRequest("Updated Name", "Updated Description");
+        this.projectRepositoryMock.Setup(x => x.GetByIdAsync(projectId, It.IsAny<CancellationToken>()))
+            .ReturnsAsync((Project?)null);
+
+        // Act & Assert
+        await Assert.ThrowsAsync<NotFoundException>(() => this.projectService.UpdateAsync(projectId, request));
+    }
+
+    [Fact]
+    public async Task GetAllAsyncRetornaListaDeProyectos()
+    {
+        // Arrange
+        var projects = new List<Project> { new ProjectBuilder().Build(), new ProjectBuilder().WithName("P2").Build() };
+        this.projectRepositoryMock.Setup(x => x.GetAllAsync(It.IsAny<CancellationToken>()))
+            .ReturnsAsync(projects);
+
+        // Act
+        var result = await this.projectService.GetAllAsync();
+
+        // Assert
+        Assert.Equal(2, result.Count);
+    }
 }

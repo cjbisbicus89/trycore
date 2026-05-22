@@ -50,4 +50,67 @@ public sealed class ActivityServiceTests
         // Act & Assert
         await Assert.ThrowsAsync<NotFoundException>(() => this.activityService.GetByIdAsync(activityId));
     }
+
+    [Fact]
+    public async Task GetByProjectIdAsyncRetornaActividades()
+    {
+        // Arrange
+        var projectId = Guid.NewGuid();
+        var activities = new List<Activity> { new ActivityBuilder().WithProjectId(projectId).Build() };
+        this.activityRepositoryMock.Setup(x => x.GetByProjectIdAsync(projectId, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(activities);
+        this.evmCalculatorMock.Setup(x => x.Calculate(It.IsAny<decimal>(), It.IsAny<decimal>(), It.IsAny<decimal>(), It.IsAny<decimal>()))
+            .Returns(new EVM.ProjectManagement.Domain.ValueObjects.EVMIndicators(0, 0, 0, 0, 0, null, null, null, null, EVMStatus.CostNotApplicable, EVMStatus.ScheduleNotApplicable));
+
+        // Act
+        var result = await this.activityService.GetByProjectIdAsync(projectId);
+
+        // Assert
+        Assert.Single(result);
+    }
+
+    [Fact]
+    public async Task CreateAsyncRetornaActividadCuandoProyectoExiste()
+    {
+        // Arrange
+        var projectId = Guid.NewGuid();
+        var request = new CreateActivityRequest(projectId, "Test Activity", 1000, 50, 25, 300);
+        var project = new ProjectBuilder().Build();
+        this.projectRepositoryMock.Setup(x => x.GetByIdAsync(projectId, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(project);
+        this.evmCalculatorMock.Setup(x => x.Calculate(It.IsAny<decimal>(), It.IsAny<decimal>(), It.IsAny<decimal>(), It.IsAny<decimal>()))
+            .Returns(new EVM.ProjectManagement.Domain.ValueObjects.EVMIndicators(0, 0, 0, 0, 0, null, null, null, null, EVMStatus.CostNotApplicable, EVMStatus.ScheduleNotApplicable));
+
+        // Act
+        var result = await this.activityService.CreateAsync(request);
+
+        // Assert
+        Assert.NotNull(result);
+        Assert.Equal("Test Activity", result.Name);
+    }
+
+    [Fact]
+    public async Task UpdateAsyncLanzaNotFoundExceptionCuandoActividadNoExiste()
+    {
+        // Arrange
+        var activityId = Guid.NewGuid();
+        var request = new UpdateActivityRequest("Updated", 1000, 50, 25, 300);
+        this.activityRepositoryMock.Setup(x => x.GetByIdAsync(activityId, It.IsAny<CancellationToken>()))
+            .ReturnsAsync((Activity?)null);
+
+        // Act & Assert
+        await Assert.ThrowsAsync<NotFoundException>(() => this.activityService.UpdateAsync(activityId, request));
+    }
+
+    [Fact]
+    public async Task DeleteAsyncLanzaNotFoundExceptionCuandoActividadNoExiste()
+    {
+        // Arrange
+        var activityId = Guid.NewGuid();
+        this.activityRepositoryMock.Setup(x => x.GetByIdAsync(activityId, It.IsAny<CancellationToken>()))
+            .ReturnsAsync((Activity?)null);
+
+        // Act & Assert
+        await Assert.ThrowsAsync<NotFoundException>(() => this.activityService.DeleteAsync(activityId));
+    }
 }

@@ -18,6 +18,8 @@ public sealed class Project
 
     public DateTime CreatedAt { get; private set; }
 
+    public byte[] RowVersion { get; private set; } = Array.Empty<byte>();
+
     public IReadOnlyCollection<Activity> Activities => this.activities.AsReadOnly();
 
     // Propiedades calculadas sobre la colección de actividades

@@ -4,6 +4,10 @@ using EVM.ProjectManagement.Domain.Exceptions;
 
 public sealed class Activity
 {
+    private const decimal PercentageDivisor = 100m;
+    private const decimal MinPercentage = 0m;
+    private const decimal MaxPercentage = 100m;
+
     private Activity()
     {
     }
@@ -22,10 +26,12 @@ public sealed class Activity
 
     public decimal ActualCost { get; private set; }
 
-    // Propiedades calculadas
-    public decimal PlannedValue => this.BudgetedCost * (this.PlannedPercentage / 100);
+    public byte[] RowVersion { get; private set; } = Array.Empty<byte>();
 
-    public decimal EarnedValue => this.BudgetedCost * (this.ActualPercentage / 100);
+    // Propiedades calculadas
+    public decimal PlannedValue => this.BudgetedCost * (this.PlannedPercentage / PercentageDivisor);
+
+    public decimal EarnedValue => this.BudgetedCost * (this.ActualPercentage / PercentageDivisor);
 
     public static Activity Create(
         Guid projectId,
@@ -46,14 +52,14 @@ public sealed class Activity
             throw new DomainException("BudgetedCost must be greater than zero");
         }
 
-        if (plannedPercentage < 0 || plannedPercentage > 100)
+        if (plannedPercentage < MinPercentage || plannedPercentage > MaxPercentage)
         {
-            throw new DomainException("PlannedPercentage must be between 0 and 100");
+            throw new DomainException($"PlannedPercentage must be between {MinPercentage} and {MaxPercentage}");
         }
 
-        if (actualPercentage < 0 || actualPercentage > 100)
+        if (actualPercentage < MinPercentage || actualPercentage > MaxPercentage)
         {
-            throw new DomainException("ActualPercentage must be between 0 and 100");
+            throw new DomainException($"ActualPercentage must be between {MinPercentage} and {MaxPercentage}");
         }
 
         if (actualCost < 0)
@@ -91,14 +97,14 @@ public sealed class Activity
             throw new DomainException("BudgetedCost must be greater than zero");
         }
 
-        if (plannedPercentage < 0 || plannedPercentage > 100)
+        if (plannedPercentage < MinPercentage || plannedPercentage > MaxPercentage)
         {
-            throw new DomainException("PlannedPercentage must be between 0 and 100");
+            throw new DomainException($"PlannedPercentage must be between {MinPercentage} and {MaxPercentage}");
         }
 
-        if (actualPercentage < 0 || actualPercentage > 100)
+        if (actualPercentage < MinPercentage || actualPercentage > MaxPercentage)
         {
-            throw new DomainException("ActualPercentage must be between 0 and 100");
+            throw new DomainException($"ActualPercentage must be between {MinPercentage} and {MaxPercentage}");
         }
 
         if (actualCost < 0)

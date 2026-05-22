@@ -20,7 +20,10 @@ public sealed class ProjectRepository : IProjectRepository
         => await this.context.Projects.Include(p => p.Activities).FirstOrDefaultAsync(p => p.Id == id, cancellationToken);
 
     public async Task<IReadOnlyList<Project>> GetAllAsync(CancellationToken cancellationToken = default)
-        => await this.context.Projects.ToListAsync(cancellationToken).ContinueWith(t => t.Result.AsReadOnly(), cancellationToken);
+    {
+        var projects = await this.context.Projects.ToListAsync(cancellationToken);
+        return projects.AsReadOnly();
+    }
 
     public async Task AddAsync(Project project, CancellationToken cancellationToken = default)
     {

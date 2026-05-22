@@ -5,6 +5,9 @@ using FluentValidation;
 
 public sealed class CreateActivityRequestValidator : AbstractValidator<CreateActivityRequest>
 {
+    private const decimal MinPercentage = 0m;
+    private const decimal MaxPercentage = 100m;
+
     public CreateActivityRequestValidator()
     {
         this.RuleFor(x => x.ProjectId)
@@ -18,10 +21,10 @@ public sealed class CreateActivityRequestValidator : AbstractValidator<CreateAct
             .GreaterThan(0);
 
         this.RuleFor(x => x.PlannedPercentage)
-            .InclusiveBetween(0, 100);
+            .InclusiveBetween(MinPercentage, MaxPercentage);
 
         this.RuleFor(x => x.ActualPercentage)
-            .InclusiveBetween(0, 100);
+            .InclusiveBetween(MinPercentage, MaxPercentage);
 
         this.RuleFor(x => x.ActualCost)
             .GreaterThanOrEqualTo(0);

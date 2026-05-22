@@ -17,7 +17,10 @@ public sealed class ActivityRepository : IActivityRepository
         => await this.context.Activities.FindAsync([id], cancellationToken);
 
     public async Task<IReadOnlyList<Activity>> GetByProjectIdAsync(Guid projectId, CancellationToken cancellationToken = default)
-        => await this.context.Activities.Where(a => a.ProjectId == projectId).ToListAsync(cancellationToken).ContinueWith(t => t.Result.AsReadOnly(), cancellationToken);
+    {
+        var activities = await this.context.Activities.Where(a => a.ProjectId == projectId).ToListAsync(cancellationToken);
+        return activities.AsReadOnly();
+    }
 
     public async Task AddAsync(Activity activity, CancellationToken cancellationToken = default)
     {

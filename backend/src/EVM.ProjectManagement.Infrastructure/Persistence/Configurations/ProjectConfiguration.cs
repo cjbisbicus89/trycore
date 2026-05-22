@@ -22,6 +22,9 @@ public sealed class ProjectConfiguration : IEntityTypeConfiguration<Project>
             .IsRequired()
             .HasDefaultValueSql("NOW()");
 
+        builder.Property(p => p.RowVersion)
+            .IsRowVersion();
+
         // Índice para ordenamiento por fecha de creación
         builder.HasIndex(p => p.CreatedAt)
             .IsDescending()

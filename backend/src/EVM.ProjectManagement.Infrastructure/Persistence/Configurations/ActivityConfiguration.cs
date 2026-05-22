@@ -33,6 +33,9 @@ public sealed class ActivityConfiguration : IEntityTypeConfiguration<Activity>
             .IsRequired()
             .HasPrecision(18, 2);
 
+        builder.Property(a => a.RowVersion)
+            .IsRowVersion();
+
         // Índice para consultas por ProjectId (dashboard carga actividades por proyecto)
         builder.HasIndex(a => a.ProjectId)
             .HasDatabaseName("IX_Activities_ProjectId");
