@@ -15,6 +15,10 @@
     [status]="getAcStatus()"
   />
   <app-indicator-card
+    label="BAC"
+    [value]="totalBudgetedCost()"
+  />
+  <app-indicator-card
     label="CV (Cost Variance)"
     [value]="evmIndicators().costVariance"
     [status]="getCvStatus()"
@@ -25,18 +29,21 @@
     [status]="getSvStatus()"
   />
   <app-indicator-card
-    label="CPI (Cost Performance Index)"
+    label="CPI"
     [value]="evmIndicators().costPerformanceIndex"
     [status]="getCpiStatus()"
   />
   <app-indicator-card
-    label="SPI (Schedule Performance Index)"
+    label="SPI"
     [value]="evmIndicators().schedulePerformanceIndex"
     [status]="getSpiStatus()"
   />
   <app-indicator-card
-    label="Estado Costo"
-    [value]="null"
-    [status]="getOverallStatus()"
+    label="EAC"
+    [value]="evmIndicators().estimateAtCompletion"
+  />
+  <app-indicator-card
+    label="VAC"
+    [value]="evmIndicators().varianceAtCompletion"
   />
 </div>

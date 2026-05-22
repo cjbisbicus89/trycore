@@ -1,4 +1,4 @@
-import { Component, input, computed } from '@angular/core';
+import { Component, input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { IndicatorCardComponent } from '../../../shared/components/indicator-card/indicator-card.component';
 import type { EvmIndicators } from '../../../core/models';
@@ -16,6 +16,7 @@ import type { EvmIndicators } from '../../../core/models';
 })
 export class EvmSummaryComponent {
   evmIndicators = input.required<EvmIndicators>();
+  totalBudgetedCost = input.required<number>();
 
   getPvStatus(): string | null {
     return null;
