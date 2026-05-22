@@ -1,4 +1,4 @@
-import { Component, input, OnChanges, SimpleChanges } from '@angular/core';
+import { Component, input, effect } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { BaseChartDirective } from 'ng2-charts';
 import { ChartType, ChartOptions, ChartData } from 'chart.js';
@@ -9,13 +9,9 @@ import type { Activity } from '../../../core/models';
   standalone: true,
   imports: [CommonModule, BaseChartDirective],
   templateUrl: './evm-chart.component.html',
-  styles: [`
-    .chart-container {
-      @apply bg-white shadow-sm border border-slate-100 rounded-lg p-6;
-    }
-  `]
+  styles: []
 })
-export class EvmChartComponent implements OnChanges {
+export class EvmChartComponent {
   activities = input.required<Activity[]>();
 
   chartType: ChartType = 'bar';
@@ -25,56 +21,64 @@ export class EvmChartComponent implements OnChanges {
   };
   chartOptions: ChartOptions = {
     responsive: true,
+    maintainAspectRatio: false,
     plugins: {
       legend: {
         position: 'top',
+        labels: {
+          font: { family: 'Inter', size: 12 },
+          color: '#1A2B4A'
+        }
       },
       title: {
         display: true,
-        text: 'PV vs EV vs AC por actividad'
+        text: 'PV vs EV vs AC por actividad',
+        font: { family: 'Inter', size: 14, weight: 600 },
+        color: '#1A2B4A'
       }
     },
     scales: {
       y: {
-        beginAtZero: true
+        beginAtZero: true,
+        ticks: { font: { family: 'Inter', size: 11 }, color: '#64748B' },
+        grid: { color: '#F1F5F9' }
+      },
+      x: {
+        ticks: { font: { family: 'Inter', size: 11 }, color: '#64748B' },
+        grid: { display: false }
       }
     }
   };
 
-  ngOnChanges(changes: SimpleChanges): void {
-    if (changes['activities']) {
-      this.updateChartData();
-    }
-  }
-
-  private updateChartData(): void {
-    const activities = this.activities();
-
-    this.chartData = {
-      labels: activities.map(a => a.name),
-      datasets: [
-        {
-          label: 'PV (Planned Value)',
-          data: activities.map(a => a.indicators.plannedValue),
-          backgroundColor: '#3B82F6',
-          borderColor: '#3B82F6',
-          borderWidth: 1
-        },
-        {
-          label: 'EV (Earned Value)',
-          data: activities.map(a => a.indicators.earnedValue),
-          backgroundColor: '#10B981',
-          borderColor: '#10B981',
-          borderWidth: 1
-        },
-        {
-          label: 'AC (Actual Cost)',
-          data: activities.map(a => a.indicators.actualCost),
-          backgroundColor: '#F59E0B',
-          borderColor: '#F59E0B',
-          borderWidth: 1
-        }
-      ]
-    };
+  constructor() {
+    effect(() => {
+      const activities = this.activities();
+      this.chartData = {
+        labels: activities.map(a => a.name),
+        datasets: [
+          {
+            label: 'PV — Planned Value',
+            data: activities.map(a => a.plannedValue),
+            backgroundColor: '#1E3A6E',
+            borderColor: '#1A2B4A',
+            borderWidth: 1
+          },
+          {
+            label: 'EV — Earned Value',
+            data: activities.map(a => a.earnedValue),
+            backgroundColor: '#FF6B2B',
+            borderColor: '#CC5522',
+            borderWidth: 1
+          },
+          {
+            label: 'AC — Actual Cost',
+            data: activities.map(a => a.actualCost),
+            backgroundColor: '#94A3B8',
+            borderColor: '#64748B',
+            borderWidth: 1
+          }
+        ]
+      };
+    });
   }
 }
