@@ -1,23 +1,36 @@
-<div class="card" (click)="navigateToDashboard()">
-  <div class="card-header">
-    <h3 class="project-name">{{ project().name }}</h3>
+<div class="bg-white rounded-xl border border-slate-200 shadow-sm hover:shadow-md hover:border-trycore-orange/30 transition-all duration-200 p-5 flex flex-col gap-3 cursor-pointer" 
+     (click)="navigateToDashboard()" 
+     (keydown.enter)="navigateToDashboard()" 
+     (keydown.space)="navigateToDashboard()" 
+     role="button" 
+     tabindex="0">
+  <div class="flex items-start justify-between">
+    <div>
+      <h3 class="font-semibold text-trycore-navy text-base">{{ project().name }}</h3>
+      <p class="text-slate-500 text-sm mt-1 line-clamp-2">{{ project().description }}</p>
+    </div>
     @if (project().indicators) {
-      <app-status-badge [status]="project().indicators.costStatus || 'N/A'" />
+      <app-status-badge [status]="project().indicators!.costStatus || 'N/A'" />
     }
   </div>
-  <p class="description">{{ project().description }}</p>
-  <div class="metrics">
-    <div class="metric">
-      <span class="metric-label">Creado:</span>
-      <span class="metric-value">{{ formattedDate() }}</span>
+
+  <div class="flex items-center justify-between pt-3 border-t border-slate-100">
+    <span class="text-xs text-slate-400">
+      {{ formattedDate() }}
+    </span>
+    <div class="flex gap-2">
+      <button
+        (click)="navigateToDashboard()"
+        class="bg-trycore-navy text-white text-xs font-medium px-3 py-1.5 rounded-lg hover:bg-trycore-blue transition-colors"
+      >
+        Ver Dashboard
+      </button>
+      <button
+        (click)="deleteProject($event)"
+        class="text-red-500 hover:text-red-700 text-xs font-medium px-3 py-1.5 transition-colors"
+      >
+        Eliminar
+      </button>
     </div>
-    <div class="metric">
-      <span class="metric-label">Actividades:</span>
-      <span class="metric-value">{{ project().activities.length }}</span>
-    </div>
-  </div>
-  <div class="actions">
-    <button class="btn-view" (click)="navigateToDashboard()">Ver Dashboard</button>
-    <button class="btn-delete" (click)="deleteProject($event)">Eliminar</button>
   </div>
 </div>

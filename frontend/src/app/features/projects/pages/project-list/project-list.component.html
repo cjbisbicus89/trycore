@@ -1,50 +1,101 @@
-<div class="container">
-  <div class="header">
-    <h1 class="title">Proyectos</h1>
-    <button class="btn-primary" (click)="showCreateForm.set(true)">Nuevo Proyecto</button>
+<div class="min-h-screen bg-[#F5F7FA]">
+  <div class="bg-white border-b border-slate-200 px-6 py-5">
+    <div class="max-w-6xl mx-auto flex items-center justify-between">
+      <div>
+        <h1 class="text-2xl font-bold text-trycore-navy">Proyectos</h1>
+        <p class="text-slate-500 text-sm mt-0.5">Gestiona tus proyectos y su avance EVM</p>
+      </div>
+      <button (click)="showCreateForm.set(true)"
+        class="bg-trycore-orange hover:bg-trycore-orange-light text-white
+               font-medium text-sm px-5 py-2.5 rounded-lg transition-colors flex items-center gap-2">
+        + Nuevo Proyecto
+      </button>
+    </div>
   </div>
 
   @if (showCreateForm()) {
-    <div class="form-container">
-      <h2 class="form-title">Crear Nuevo Proyecto</h2>
-      <form [formGroup]="projectForm" (ngSubmit)="createProject()">
-        <div class="form-group">
-          <label for="name">Nombre</label>
-          <input id="name" type="text" formControlName="name" placeholder="Nombre del proyecto" />
-          @if (projectForm.get('name')?.invalid && projectForm.get('name')?.touched) {
-            <span class="error">El nombre es requerido</span>
-          }
-        </div>
-        <div class="form-group">
-          <label for="description">Descripción</label>
-          <textarea id="description" formControlName="description" placeholder="Descripción del proyecto"></textarea>
-          @if (projectForm.get('description')?.invalid && projectForm.get('description')?.touched) {
-            <span class="error">La descripción es requerida</span>
-          }
-        </div>
-        <div class="form-actions">
-          <button type="button" class="btn-secondary" (click)="showCreateForm.set(false)">Cancelar</button>
-          <button type="submit" class="btn-primary" [disabled]="isCreating()">Crear</button>
-        </div>
-      </form>
+    <div class="max-w-6xl mx-auto px-6 py-6">
+      <div class="bg-white shadow-sm border border-slate-200 rounded-lg p-6">
+        <h2 class="text-xl font-semibold text-trycore-navy mb-4">Crear Nuevo Proyecto</h2>
+        <form [formGroup]="projectForm" (ngSubmit)="createProject()" class="flex flex-col gap-4">
+          <div>
+            <label for="name" class="text-xs font-medium text-slate-500 uppercase tracking-wider block mb-1">
+              Nombre
+            </label>
+            <input
+              id="name"
+              type="text"
+              formControlName="name"
+              class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm text-trycore-navy
+                     focus:outline-none focus:ring-2 focus:ring-trycore-orange/30 focus:border-trycore-orange
+                     transition-all"
+              placeholder="Nombre del proyecto"
+            />
+            @if (projectForm.get('name')?.hasError('required') && projectForm.get('name')?.touched) {
+              <p class="text-red-500 text-xs mt-1">{{ ValidationMessages.NameRequired }}</p>
+            }
+            @if (projectForm.get('name')?.hasError('maxlength') && projectForm.get('name')?.touched) {
+              <p class="text-red-500 text-xs mt-1">{{ ValidationMessages.NameTooLong }}</p>
+            }
+          </div>
+          <div>
+            <label for="description" class="text-xs font-medium text-slate-500 uppercase tracking-wider block mb-1">
+              Descripción
+            </label>
+            <textarea
+              id="description"
+              formControlName="description"
+              class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm text-trycore-navy min-h-[100px] resize-y
+                     focus:outline-none focus:ring-2 focus:ring-trycore-orange/30 focus:border-trycore-orange
+                     transition-all"
+              placeholder="Descripción del proyecto"
+            ></textarea>
+            @if (projectForm.get('description')?.hasError('required') && projectForm.get('description')?.touched) {
+              <p class="text-red-500 text-xs mt-1">{{ ValidationMessages.DescriptionRequired }}</p>
+            }
+            @if (projectForm.get('description')?.hasError('maxlength') && projectForm.get('description')?.touched) {
+              <p class="text-red-500 text-xs mt-1">{{ ValidationMessages.DescriptionTooLong }}</p>
+            }
+          </div>
+          <div class="flex justify-end gap-3">
+            <button
+              type="button"
+              (click)="showCreateForm.set(false)"
+              class="border border-slate-200 text-slate-600 text-sm font-medium px-4 py-2 rounded-lg hover:bg-slate-50 transition-colors"
+            >
+              Cancelar
+            </button>
+            <button
+              type="submit"
+              [disabled]="isCreating()"
+              class="bg-trycore-orange hover:bg-trycore-orange-light disabled:opacity-50 disabled:cursor-not-allowed
+                     text-white text-sm font-medium px-4 py-2 rounded-lg transition-colors"
+            >
+              {{ isCreating() ? 'Creando...' : 'Crear' }}
+            </button>
+          </div>
+        </form>
+      </div>
     </div>
   }
 
-  @if (isLoading()) {
-    <div class="loading">
-      <div class="skeleton"></div>
-      <div class="skeleton"></div>
-      <div class="skeleton"></div>
-    </div>
-  } @else if (projects().length === 0) {
-    <div class="empty-state">
-      <p>No hay proyectos. Crea uno nuevo para comenzar.</p>
-    </div>
-  } @else {
-    <div class="projects-grid">
-      @for (project of projects(); track project.id) {
-        <app-project-card [project]="project" (delete)="deleteProject($event)" />
-      }
-    </div>
-  }
+  <div class="max-w-6xl mx-auto px-6 py-6">
+    @if (isLoading()) {
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div class="bg-white rounded-xl border border-slate-200 p-5 h-48 animate-pulse"></div>
+        <div class="bg-white rounded-xl border border-slate-200 p-5 h-48 animate-pulse"></div>
+        <div class="bg-white rounded-xl border border-slate-200 p-5 h-48 animate-pulse"></div>
+      </div>
+    } @else if (projects().length === 0) {
+      <div class="text-center py-12 text-slate-500">
+        <p>No hay proyectos. Crea uno nuevo para comenzar.</p>
+      </div>
+    } @else {
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        @for (project of projects(); track project.id) {
+          <app-project-card [project]="project" (delete)="deleteProject($event)" />
+        }
+      </div>
+    }
+  </div>
 </div>

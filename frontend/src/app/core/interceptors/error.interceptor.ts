@@ -6,8 +6,12 @@ import {
 } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
+import { inject } from '@angular/core';
+import { ErrorService } from '../services/error.service';
 
 export const errorInterceptor = (request: HttpRequest<unknown>, next: HttpHandlerFn): Observable<HttpEvent<unknown>> => {
+  const errorService = inject(ErrorService);
+
   return next(request).pipe(
     catchError((error: HttpErrorResponse) => {
       let errorMessage = 'An error occurred';
@@ -18,7 +22,7 @@ export const errorInterceptor = (request: HttpRequest<unknown>, next: HttpHandle
       } else {
         // Server-side error
         switch (error.status) {
-          case 400:
+          case 400: {
             const errorBody = error.error as { errors?: Record<string, string[]>; message?: string };
             if (errorBody?.errors) {
               const errorMessages = Object.values(errorBody.errors).flat();
@@ -29,6 +33,7 @@ export const errorInterceptor = (request: HttpRequest<unknown>, next: HttpHandle
               errorMessage = 'Solicitud inválida';
             }
             break;
+          }
           case 404:
             errorMessage = 'Recurso no encontrado';
             break;
@@ -40,8 +45,9 @@ export const errorInterceptor = (request: HttpRequest<unknown>, next: HttpHandle
         }
       }
 
-      // TODO: Implementar ToastService o signal global para mostrar el error
-      // Por ahora, el error se propaga para que el componente lo maneje
+      // Usar signal global para mostrar el error
+      errorService.setError(errorMessage);
+
       return throwError(() => errorMessage);
     })
   );
