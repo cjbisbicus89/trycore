@@ -5,25 +5,31 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { ProjectService } from '../../../core/services/project.service';
 import { ActivityService } from '../../../core/services/activity.service';
 import { ActivityTableComponent } from '../../components/activity-table/activity-table.component';
+import { EvmSummaryComponent } from '../../components/evm-summary/evm-summary.component';
+import { EvmChartComponent } from '../../components/evm-chart/evm-chart.component';
+import { ActivityFormModalComponent } from '../../components/activity-form-modal/activity-form-modal.component';
 import type { Project, Activity } from '../../../core/models';
 
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [CommonModule, ActivityTableComponent],
+  imports: [CommonModule, ActivityTableComponent, EvmSummaryComponent, EvmChartComponent, ActivityFormModalComponent],
   templateUrl: './dashboard.component.html',
   styles: [`
     .container {
       @apply max-w-7xl mx-auto p-6;
     }
     .header {
-      @apply mb-8;
+      @apply mb-8 flex justify-between items-center;
     }
     .btn-back {
       @apply mb-4 px-4 py-2 bg-slate-200 text-slate-700 rounded-lg hover:bg-slate-300 transition-colors;
     }
+    .btn-primary {
+      @apply px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium;
+    }
     .header-content {
-      @apply bg-gradient-to-r from-blue-600 via-blue-700 to-indigo-700 text-white rounded-lg p-8 shadow-lg;
+      @apply bg-gradient-to-r from-blue-600 via-blue-700 to-indigo-700 text-white rounded-lg p-8 shadow-lg flex-1 mr-4;
     }
     .project-name {
       @apply text-4xl font-bold mb-2 tracking-tight;
@@ -31,19 +37,10 @@ import type { Project, Activity } from '../../../core/models';
     .project-description {
       @apply text-blue-100 text-lg;
     }
-    .indicators-grid {
-      @apply grid grid-cols-2 md:grid-cols-4 gap-4 mb-8;
-    }
-    .indicator-card {
-      @apply bg-white shadow-sm border border-slate-100 rounded-lg p-4;
-    }
-    .indicator-label {
-      @apply text-xs text-slate-500 uppercase tracking-widest mb-2;
-    }
-    .indicator-value {
-      @apply text-2xl font-bold text-slate-900;
-    }
     .activities-section {
+      @apply bg-white shadow-sm border border-slate-100 rounded-lg p-6 mb-8;
+    }
+    .chart-section {
       @apply bg-white shadow-sm border border-slate-100 rounded-lg p-6;
     }
     .section-title {
@@ -80,6 +77,13 @@ export class DashboardComponent implements OnInit {
   activities = signal<Activity[]>([]);
   isLoading = signal(true);
   error = signal<string | null>(null);
+  showModal = signal(false);
+  selectedActivity = signal<Activity | null>(null);
+
+  consolidatedIndicators = computed(() => this.project()?.indicators ?? null);
+  totalBudgetedCost = computed(() =>
+    this.activities().reduce((sum, a) => sum + a.budgetedCost, 0)
+  );
 
   ngOnInit(): void {
     const projectId = this.route.snapshot.paramMap.get('id');
@@ -122,5 +126,48 @@ export class DashboardComponent implements OnInit {
 
   goBack(): void {
     this.router.navigate(['/projects']);
+  }
+
+  openCreateModal(): void {
+    this.selectedActivity.set(null);
+    this.showModal.set(true);
+  }
+
+  openEditModal(activity: Activity): void {
+    this.selectedActivity.set(activity);
+    this.showModal.set(true);
+  }
+
+  closeModal(): void {
+    this.showModal.set(false);
+    this.selectedActivity.set(null);
+  }
+
+  onActivitySaved(): void {
+    const projectId = this.project()?.id;
+    if (projectId) {
+      this.loadActivities(projectId);
+      this.loadDashboard(projectId);
+    }
+    this.closeModal();
+  }
+
+  onActivityDeleted(activityId: string): void {
+    if (!confirm('¿Estás seguro de eliminar esta actividad?')) {
+      return;
+    }
+
+    this.activityService.delete(activityId).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+      next: () => {
+        const projectId = this.project()?.id;
+        if (projectId) {
+          this.loadActivities(projectId);
+          this.loadDashboard(projectId);
+        }
+      },
+      error: () => {
+        // Handle error
+      }
+    });
   }
 }
