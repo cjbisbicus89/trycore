@@ -5,6 +5,7 @@ using EVM.ProjectManagement.Application;
 using EVM.ProjectManagement.Infrastructure;
 using EVM.ProjectManagement.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.OpenApi;
 
 public sealed class Program
 {
@@ -48,7 +49,7 @@ public sealed class Program
 
         builder.Services.AddSwaggerGen(options =>
         {
-            options.SwaggerDoc(SwaggerApiVersion, new Microsoft.OpenApi.Models.OpenApiInfo
+            options.SwaggerDoc(SwaggerApiVersion, new OpenApiInfo
             {
                 Title = SwaggerApiTitle,
                 Version = SwaggerApiVersion,
