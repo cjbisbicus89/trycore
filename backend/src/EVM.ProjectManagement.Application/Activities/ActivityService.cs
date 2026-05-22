@@ -10,10 +10,10 @@ using Microsoft.Extensions.Logging;
 
 public sealed class ActivityService : IActivityService
 {
-    private readonly IActivityRepository activityRepository;
-    private readonly IProjectRepository projectRepository;
-    private readonly IEVMCalculator evmCalculator;
-    private readonly ILogger<ActivityService> logger;
+    private readonly IActivityRepository _activityRepository;
+    private readonly IProjectRepository _projectRepository;
+    private readonly IEVMCalculator _evmCalculator;
+    private readonly ILogger<ActivityService> _logger;
 
     public ActivityService(
         IActivityRepository activityRepository,
@@ -21,22 +21,22 @@ public sealed class ActivityService : IActivityService
         IEVMCalculator evmCalculator,
         ILogger<ActivityService> logger)
     {
-        this.activityRepository = activityRepository;
-        this.projectRepository = projectRepository;
-        this.evmCalculator = evmCalculator;
-        this.logger = logger;
+        _activityRepository = activityRepository;
+        _projectRepository = projectRepository;
+        _evmCalculator = evmCalculator;
+        _logger = logger;
     }
 
     public async Task<IReadOnlyList<ActivityResponse>> GetByProjectIdAsync(Guid projectId, CancellationToken cancellationToken = default)
     {
-        var activities = await this.activityRepository.GetByProjectIdAsync(projectId, cancellationToken);
-        return activities.Select(a => a.ToResponse(this.evmCalculator)).ToList().AsReadOnly();
+        var activities = await _activityRepository.GetByProjectIdAsync(projectId, cancellationToken);
+        return activities.Select(a => a.ToResponse(_evmCalculator)).ToList().AsReadOnly();
     }
 
     public async Task<ActivityResponse> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
     {
-        var activity = await this.activityRepository.GetByIdOrThrowAsync(id, cancellationToken);
-        return activity.ToResponse(this.evmCalculator);
+        var activity = await _activityRepository.GetByIdOrThrowAsync(id, cancellationToken);
+        return activity.ToResponse(_evmCalculator);
     }
 
     public async Task<ActivityResponse> CreateAsync(CreateActivityRequest request, CancellationToken cancellationToken = default)
@@ -44,30 +44,30 @@ public sealed class ActivityService : IActivityService
         await ValidateProjectExistsAsync(request.ProjectId, cancellationToken);
 
         var activity = CreateActivityFromRequest(request);
-        await this.activityRepository.AddAsync(activity, cancellationToken);
+        await _activityRepository.AddAsync(activity, cancellationToken);
         LogActivityCreated(activity);
 
-        return activity.ToResponse(this.evmCalculator);
+        return activity.ToResponse(_evmCalculator);
     }
 
     public async Task<ActivityResponse> UpdateAsync(Guid id, UpdateActivityRequest request, CancellationToken cancellationToken = default)
     {
-        var activity = await this.activityRepository.GetByIdOrThrowAsync(id, cancellationToken);
+        var activity = await _activityRepository.GetByIdOrThrowAsync(id, cancellationToken);
         UpdateActivityFromRequest(activity, request);
-        await this.activityRepository.UpdateAsync(activity, cancellationToken);
+        await _activityRepository.UpdateAsync(activity, cancellationToken);
 
-        return activity.ToResponse(this.evmCalculator);
+        return activity.ToResponse(_evmCalculator);
     }
 
     public async Task DeleteAsync(Guid id, CancellationToken cancellationToken = default)
     {
-        var activity = await this.activityRepository.GetByIdOrThrowAsync(id, cancellationToken);
-        await this.activityRepository.DeleteAsync(activity, cancellationToken);
+        var activity = await _activityRepository.GetByIdOrThrowAsync(id, cancellationToken);
+        await _activityRepository.DeleteAsync(activity, cancellationToken);
     }
 
     private async Task ValidateProjectExistsAsync(Guid projectId, CancellationToken cancellationToken)
     {
-        await this.projectRepository.GetByIdOrThrowAsync(projectId, cancellationToken);
+        await _projectRepository.GetByIdOrThrowAsync(projectId, cancellationToken);
     }
 
     private static Activity CreateActivityFromRequest(CreateActivityRequest request)
@@ -93,6 +93,6 @@ public sealed class ActivityService : IActivityService
 
     private void LogActivityCreated(Activity activity)
     {
-        this.logger.LogInformation(ActivityLogMessages.ActivityCreated, activity.Id, activity.ProjectId);
+        _logger.LogInformation(ActivityLogMessages.ActivityCreated, activity.Id, activity.ProjectId);
     }
 }

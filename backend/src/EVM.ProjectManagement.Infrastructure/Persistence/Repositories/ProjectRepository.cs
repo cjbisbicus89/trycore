@@ -6,40 +6,40 @@ using Microsoft.EntityFrameworkCore;
 
 public sealed class ProjectRepository : IProjectRepository
 {
-    private readonly AppDbContext context;
+    private readonly AppDbContext _context;
 
     public ProjectRepository(AppDbContext context)
     {
-        this.context = context;
+        _context = context;
     }
 
     public async Task<Project?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
-        => await this.context.Projects.FindAsync([id], cancellationToken).ConfigureAwait(false);
+        => await _context.Projects.FindAsync([id], cancellationToken).ConfigureAwait(false);
 
     public async Task<Project?> GetWithActivitiesAsync(Guid id, CancellationToken cancellationToken = default)
-        => await this.context.Projects.Include(p => p.Activities).FirstOrDefaultAsync(p => p.Id == id, cancellationToken).ConfigureAwait(false);
+        => await _context.Projects.Include(p => p.Activities).FirstOrDefaultAsync(p => p.Id == id, cancellationToken).ConfigureAwait(false);
 
     public async Task<IReadOnlyList<Project>> GetAllAsync(CancellationToken cancellationToken = default)
     {
-        var projects = await this.context.Projects.ToListAsync(cancellationToken).ConfigureAwait(false);
+        var projects = await _context.Projects.ToListAsync(cancellationToken).ConfigureAwait(false);
         return projects.AsReadOnly();
     }
 
     public async Task AddAsync(Project project, CancellationToken cancellationToken = default)
     {
-        await this.context.Projects.AddAsync(project, cancellationToken).ConfigureAwait(false);
-        await this.context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
+        await _context.Projects.AddAsync(project, cancellationToken).ConfigureAwait(false);
+        await _context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
     }
 
     public async Task UpdateAsync(Project project, CancellationToken cancellationToken = default)
     {
-        this.context.Projects.Update(project);
-        await this.context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
+        _context.Projects.Update(project);
+        await _context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
     }
 
     public async Task DeleteAsync(Project project, CancellationToken cancellationToken = default)
     {
-        this.context.Projects.Remove(project);
-        await this.context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
+        _context.Projects.Remove(project);
+        await _context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
     }
 }

@@ -6,37 +6,37 @@ using Microsoft.EntityFrameworkCore;
 
 public sealed class ActivityRepository : IActivityRepository
 {
-    private readonly AppDbContext context;
+    private readonly AppDbContext _context;
 
     public ActivityRepository(AppDbContext context)
     {
-        this.context = context;
+        _context = context;
     }
 
     public async Task<Activity?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
-        => await this.context.Activities.FindAsync([id], cancellationToken).ConfigureAwait(false);
+        => await _context.Activities.FindAsync([id], cancellationToken).ConfigureAwait(false);
 
     public async Task<IReadOnlyList<Activity>> GetByProjectIdAsync(Guid projectId, CancellationToken cancellationToken = default)
     {
-        var activities = await this.context.Activities.Where(a => a.ProjectId == projectId).ToListAsync(cancellationToken).ConfigureAwait(false);
+        var activities = await _context.Activities.Where(a => a.ProjectId == projectId).ToListAsync(cancellationToken).ConfigureAwait(false);
         return activities.AsReadOnly();
     }
 
     public async Task AddAsync(Activity activity, CancellationToken cancellationToken = default)
     {
-        await this.context.Activities.AddAsync(activity, cancellationToken).ConfigureAwait(false);
-        await this.context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
+        await _context.Activities.AddAsync(activity, cancellationToken).ConfigureAwait(false);
+        await _context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
     }
 
     public async Task UpdateAsync(Activity activity, CancellationToken cancellationToken = default)
     {
-        this.context.Activities.Update(activity);
-        await this.context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
+        _context.Activities.Update(activity);
+        await _context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
     }
 
     public async Task DeleteAsync(Activity activity, CancellationToken cancellationToken = default)
     {
-        this.context.Activities.Remove(activity);
-        await this.context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
+        _context.Activities.Remove(activity);
+        await _context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
     }
 }

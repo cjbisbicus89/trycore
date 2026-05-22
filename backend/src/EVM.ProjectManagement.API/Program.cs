@@ -48,6 +48,13 @@ public sealed class Program
 
         builder.Services.AddSwaggerGen(options =>
         {
+            options.SwaggerDoc(SwaggerApiVersion, new Microsoft.OpenApi.Models.OpenApiInfo
+            {
+                Title = SwaggerApiTitle,
+                Version = SwaggerApiVersion,
+                Description = "API REST para la gestión de proyectos con cálculo automático de indicadores de Valor Ganado (EVM).",
+            });
+
             var xmlFile = $"{System.Reflection.Assembly.GetExecutingAssembly().GetName().Name}.xml";
             var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
             options.IncludeXmlComments(xmlPath, includeControllerXmlComments: true);

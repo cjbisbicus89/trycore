@@ -2,17 +2,14 @@
   <app-indicator-card
     label="PV (Planned Value)"
     [value]="evmIndicators().plannedValue"
-    [status]="getPvStatus()"
   />
   <app-indicator-card
     label="EV (Earned Value)"
     [value]="evmIndicators().earnedValue"
-    [status]="getEvStatus()"
   />
   <app-indicator-card
     label="AC (Actual Cost)"
     [value]="evmIndicators().actualCost"
-    [status]="getAcStatus()"
   />
   <app-indicator-card
     label="BAC"

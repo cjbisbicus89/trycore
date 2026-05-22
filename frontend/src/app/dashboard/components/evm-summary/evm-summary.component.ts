@@ -18,45 +18,25 @@ export class EvmSummaryComponent {
   evmIndicators = input.required<EvmIndicators>();
   totalBudgetedCost = input.required<number>();
 
-  getPvStatus(): string | null {
-    return null;
-  }
-
-  getEvStatus(): string | null {
-    return null;
-  }
-
-  getAcStatus(): string | null {
-    return null;
-  }
-
-  getCvStatus(): string | null {
+  getCvStatus(): string {
     const cv = this.evmIndicators().costVariance;
-    return cv >= 0 ? 'Bajo Presupuesto' : 'Sobre Presupuesto';
+    if (cv > 0) return 'Bajo Presupuesto';
+    if (cv < 0) return 'Sobre Presupuesto';
+    return 'En Presupuesto';
   }
 
-  getSvStatus(): string | null {
+  getSvStatus(): string {
     const sv = this.evmIndicators().scheduleVariance;
-    return sv >= 0 ? 'Adelantado al Cronograma' : 'Atrasado al Cronograma';
+    if (sv > 0) return 'Adelantado al Cronograma';
+    if (sv < 0) return 'Atrasado al Cronograma';
+    return 'En Cronograma';
   }
 
-  getCpiStatus(): string | null {
-    const cpi = this.evmIndicators().costPerformanceIndex;
-    if (cpi === null) return null;
-    if (cpi >= 1) return 'Bajo Presupuesto';
-    if (cpi >= 0.9) return 'En Presupuesto';
-    return 'Sobre Presupuesto';
-  }
-
-  getSpiStatus(): string | null {
-    const spi = this.evmIndicators().schedulePerformanceIndex;
-    if (spi === null) return null;
-    if (spi >= 1) return 'Adelantado al Cronograma';
-    if (spi >= 0.9) return 'En Cronograma';
-    return 'Atrasado al Cronograma';
-  }
-
-  getOverallStatus(): string | null {
+  getCpiStatus(): string {
     return this.evmIndicators().costStatus;
+  }
+
+  getSpiStatus(): string {
+    return this.evmIndicators().scheduleStatus;
   }
 }

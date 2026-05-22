@@ -55,37 +55,19 @@ export class DashboardComponent implements OnInit {
     this.projectService.getById(projectId)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
-        next: (project) => this.onDashboardLoaded(project, projectId),
+        next: (project) => this.onDashboardLoaded(project),
         error: () => this.onDashboardError()
       });
   }
 
-  private onDashboardLoaded(project: Project, projectId: string): void {
+  private onDashboardLoaded(project: Project): void {
     this.project.set(project);
-    this.loadActivities(projectId);
+    this.activities.set(project.activities);
+    this.isLoading.set(false);
   }
 
   private onDashboardError(): void {
     this.error.set('Error al cargar el proyecto');
-    this.isLoading.set(false);
-  }
-
-  loadActivities(projectId: string): void {
-    this.activityService.getByProjectId(projectId)
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe({
-        next: (activities) => this.onActivitiesLoaded(activities),
-        error: () => this.onActivitiesError()
-      });
-  }
-
-  private onActivitiesLoaded(activities: Activity[]): void {
-    this.activities.set(activities);
-    this.isLoading.set(false);
-  }
-
-  private onActivitiesError(): void {
-    this.error.set('Error al cargar las actividades');
     this.isLoading.set(false);
   }
 
@@ -111,7 +93,6 @@ export class DashboardComponent implements OnInit {
   onActivitySaved(): void {
     const projectId = this.project()?.id;
     if (projectId) {
-      this.loadActivities(projectId);
       this.loadDashboard(projectId);
     }
     this.closeModal();
@@ -133,7 +114,6 @@ export class DashboardComponent implements OnInit {
   private onActivityDeletedSuccess(): void {
     const projectId = this.project()?.id;
     if (projectId) {
-      this.loadActivities(projectId);
       this.loadDashboard(projectId);
     }
   }
