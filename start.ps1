@@ -10,7 +10,14 @@ Write-Host " EVM Project Management - Arranque local" -ForegroundColor Cyan
 Write-Host "==============================================" -ForegroundColor Cyan
 Write-Host ""
 
-Write-Host "[1/3] Construyendo y levantando contenedores..." -ForegroundColor Yellow
+Write-Host "[1/4] Liberando puertos..." -ForegroundColor Yellow
+Get-NetTCPConnection -LocalPort 4200,5000 -ErrorAction SilentlyContinue | Select-Object -ExpandProperty OwningProcess | ForEach-Object { Stop-Process -Id $_ -Force -ErrorAction SilentlyContinue }
+Get-Process -Name "node" -ErrorAction SilentlyContinue | Stop-Process -Force -ErrorAction SilentlyContinue
+Get-Process -Name "dotnet" -ErrorAction SilentlyContinue | Stop-Process -Force -ErrorAction SilentlyContinue
+Write-Host "Puertos 4200 y 5000 liberados." -ForegroundColor Green
+
+Write-Host ""
+Write-Host "[2/4] Construyendo y levantando contenedores..." -ForegroundColor Yellow
 docker compose -f $ComposeFile up -d --build
 if ($LASTEXITCODE -ne 0) {
     Write-Host "Error al levantar los contenedores." -ForegroundColor Red
@@ -18,7 +25,7 @@ if ($LASTEXITCODE -ne 0) {
 }
 
 Write-Host ""
-Write-Host "[2/3] Esperando a que la API este lista..." -ForegroundColor Yellow
+Write-Host "[3/4] Esperando a que la API este lista..." -ForegroundColor Yellow
 $maxRetries = 30
 $apiReady = $false
 for ($i = 1; $i -le $maxRetries; $i++) {
@@ -42,7 +49,7 @@ if (-not $apiReady) {
 Write-Host "API lista." -ForegroundColor Green
 
 Write-Host ""
-Write-Host "[3/3] Abriendo URLs en el navegador..." -ForegroundColor Yellow
+Write-Host "[4/4] Abriendo URLs en el navegador..." -ForegroundColor Yellow
 Start-Process "http://localhost:4200"
 Start-Process "http://localhost:5000/swagger-ui"
 Start-Process "http://localhost:5000/api-docs/v1/swagger.json"

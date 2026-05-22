@@ -9,7 +9,7 @@ using Microsoft.OpenApi;
 
 public sealed class Program
 {
-    private const string DefaultApiUrl = "http://localhost:5001";
+    private const string DefaultApiUrl = "http://localhost:5000";
     private const string SwaggerApiVersion = "v1";
     private const string SwaggerApiTitle = "API de Gestión EVM";
 
@@ -58,7 +58,10 @@ public sealed class Program
 
             var xmlFile = $"{System.Reflection.Assembly.GetExecutingAssembly().GetName().Name}.xml";
             var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
-            options.IncludeXmlComments(xmlPath, includeControllerXmlComments: true);
+            if (File.Exists(xmlPath))
+            {
+                options.IncludeXmlComments(xmlPath, includeControllerXmlComments: true);
+            }
         });
     }
 
@@ -83,11 +86,7 @@ public sealed class Program
 
     private static void ConfigureSwagger(WebApplication app)
     {
-        if (!app.Environment.IsDevelopment())
-        {
-            return;
-        }
-
+        // Swagger habilitado en todos los entornos para facilitar pruebas locales
         app.UseSwagger(c => c.RouteTemplate = "api-docs/{documentName}/swagger.json");
         app.UseSwaggerUI(c =>
         {

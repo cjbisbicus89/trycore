@@ -6,7 +6,7 @@ Sistema para gestionar proyectos y calcular automáticamente los indicadores de 
 
 ## 🚀 Cómo correr el proyecto (lo más simple)
 
-Si tienes Docker Desktop instalado, esto es todo lo que necesitás:
+Si tenés Docker Desktop instalado, esto es todo lo que necesitás:
 
 **Windows:**
 ```powershell
@@ -19,18 +19,20 @@ chmod +x start.sh
 ./start.sh
 ```
 
-Ese único comando hace todo:
-- Levanta la base de datos (PostgreSQL)
-- Levanta la API (backend)
-- Levanta el frontend
-- Abre automáticamente tu navegador en la aplicación
-- También abre la documentación de la API
+### ¿Qué hace ese comando?
 
-Una vez que termine, vas a ver:
-- **Frontend:** http://localhost:4200
-- **Documentación API:** http://localhost:5000/swagger-ui
+1. **Limpia puertos** — Cierra cualquier programa que esté usando los puertos 4200 y 5000
+2. **Levanta la base de datos** — PostgreSQL en un contenedor Docker
+3. **Levanta la API** — El backend en .NET 8
+4. **Levanta el frontend** — La aplicación en Angular
+5. **Abre tu navegador** — Automáticamente abre:
+   - La aplicación principal: http://localhost:4200
+   - La documentación de la API: http://localhost:5000/swagger-ui
+   - El archivo de especificación de la API: http://localhost:5000/api-docs/v1/swagger.json
 
-Para detener todo:
+### ¿Cómo detenerlo?
+
+Abre una terminal y ejecutá:
 ```bash
 docker compose -f backend/docker-compose.yml down
 ```
@@ -72,25 +74,25 @@ open "http://localhost:4200" && open "http://localhost:5000/swagger-ui"
 
 Si querés modificar el código y ver los cambios en tiempo real:
 
-**1. Base de datos:**
+**Paso 1 — Base de datos:**
 ```bash
 docker compose -f backend/docker-compose.yml up -d db
 ```
 
-**2. Backend (en una terminal):**
+**Paso 2 — Backend** (en una terminal):
 ```bash
 cd backend
 dotnet run --project src/EVM.ProjectManagement.API
 ```
 
-**3. Frontend (en otra terminal):**
+**Paso 3 — Frontend** (en otra terminal):
 ```bash
 cd frontend
 npm install
 npm start
 ```
 
-**4. Abrir el navegador** (una vez que veas `Application bundle generation complete` en la terminal del frontend):
+**Paso 4 — Abrir el navegador** (una vez que veas `Application bundle generation complete` en la terminal del frontend):
 
 ```powershell
 # Windows
