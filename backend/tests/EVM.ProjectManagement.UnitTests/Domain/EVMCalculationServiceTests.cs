@@ -113,105 +113,99 @@ public sealed class EVMCalculationServiceTests
     }
 
     [Theory]
-    [InlineData(1000, 1000, 1000, 2000, "On Budget")]
-    [InlineData(500, 500, 500, 1000, "On Budget")]
+    [InlineData(1000, 1000, 1000, 2000)]
+    [InlineData(500, 500, 500, 1000)]
     public void CalculateCostStatus_WhenCPIIsOne_ReturnsOnBudget(
         decimal plannedValue,
         decimal earnedValue,
         decimal actualCost,
-        decimal budgetedCost,
-        string expectedStatus)
+        decimal budgetedCost)
     {
         // Act
         var indicators = _calculator.Calculate(plannedValue, earnedValue, actualCost, budgetedCost);
 
         // Assert
-        indicators.CostStatus.Should().Be(expectedStatus);
+        indicators.CostStatus.Should().Be(EVMStatus.EnPresupuesto);
     }
 
     [Theory]
-    [InlineData(1000, 900, 800, 2000, "Under Budget")]
-    [InlineData(500, 450, 400, 1000, "Under Budget")]
+    [InlineData(1000, 900, 800, 2000)]
+    [InlineData(500, 450, 400, 1000)]
     public void CalculateCostStatus_WhenCPIIsGreaterThanOne_ReturnsUnderBudget(
         decimal plannedValue,
         decimal earnedValue,
         decimal actualCost,
-        decimal budgetedCost,
-        string expectedStatus)
+        decimal budgetedCost)
     {
         // Act
         var indicators = _calculator.Calculate(plannedValue, earnedValue, actualCost, budgetedCost);
 
         // Assert
-        indicators.CostStatus.Should().Be(expectedStatus);
+        indicators.CostStatus.Should().Be(EVMStatus.BajoPresupuesto);
     }
 
     [Theory]
-    [InlineData(1000, 800, 900, 2000, "Over Budget")]
-    [InlineData(500, 400, 450, 1000, "Over Budget")]
+    [InlineData(1000, 800, 900, 2000)]
+    [InlineData(500, 400, 450, 1000)]
     public void CalculateCostStatus_WhenCPIIsLessThanOne_ReturnsOverBudget(
         decimal plannedValue,
         decimal earnedValue,
         decimal actualCost,
-        decimal budgetedCost,
-        string expectedStatus)
+        decimal budgetedCost)
     {
         // Act
         var indicators = _calculator.Calculate(plannedValue, earnedValue, actualCost, budgetedCost);
 
         // Assert
-        indicators.CostStatus.Should().Be(expectedStatus);
+        indicators.CostStatus.Should().Be(EVMStatus.SobrePresupuesto);
     }
 
     [Theory]
-    [InlineData(1000, 1000, 900, 2000, "On Schedule")]
-    [InlineData(500, 500, 450, 1000, "On Schedule")]
+    [InlineData(1000, 1000, 900, 2000)]
+    [InlineData(500, 500, 450, 1000)]
     public void CalculateScheduleStatus_WhenSPIIsOne_ReturnsOnSchedule(
         decimal plannedValue,
         decimal earnedValue,
         decimal actualCost,
-        decimal budgetedCost,
-        string expectedStatus)
+        decimal budgetedCost)
     {
         // Act
         var indicators = _calculator.Calculate(plannedValue, earnedValue, actualCost, budgetedCost);
 
         // Assert
-        indicators.ScheduleStatus.Should().Be(expectedStatus);
+        indicators.ScheduleStatus.Should().Be(EVMStatus.EnCronograma);
     }
 
     [Theory]
-    [InlineData(1000, 1200, 900, 2000, "Ahead of Schedule")]
-    [InlineData(500, 600, 450, 1000, "Ahead of Schedule")]
+    [InlineData(1000, 1200, 900, 2000)]
+    [InlineData(500, 600, 450, 1000)]
     public void CalculateScheduleStatus_WhenSPIIsGreaterThanOne_ReturnsAheadOfSchedule(
         decimal plannedValue,
         decimal earnedValue,
         decimal actualCost,
-        decimal budgetedCost,
-        string expectedStatus)
+        decimal budgetedCost)
     {
         // Act
         var indicators = _calculator.Calculate(plannedValue, earnedValue, actualCost, budgetedCost);
 
         // Assert
-        indicators.ScheduleStatus.Should().Be(expectedStatus);
+        indicators.ScheduleStatus.Should().Be(EVMStatus.AdelantadoCronograma);
     }
 
     [Theory]
-    [InlineData(1000, 800, 900, 2000, "Behind Schedule")]
-    [InlineData(500, 400, 450, 1000, "Behind Schedule")]
+    [InlineData(1000, 800, 900, 2000)]
+    [InlineData(500, 400, 450, 1000)]
     public void CalculateScheduleStatus_WhenSPIIsLessThanOne_ReturnsBehindSchedule(
         decimal plannedValue,
         decimal earnedValue,
         decimal actualCost,
-        decimal budgetedCost,
-        string expectedStatus)
+        decimal budgetedCost)
     {
         // Act
         var indicators = _calculator.Calculate(plannedValue, earnedValue, actualCost, budgetedCost);
 
         // Assert
-        indicators.ScheduleStatus.Should().Be(expectedStatus);
+        indicators.ScheduleStatus.Should().Be(EVMStatus.AtrasadoCronograma);
     }
 
     [Theory]

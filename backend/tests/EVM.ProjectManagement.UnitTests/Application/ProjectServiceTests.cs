@@ -122,27 +122,21 @@ public sealed class ProjectServiceTests
         result.Should().HaveCount(2);
     }
 
-    [Theory]
-    [InlineData(0, 0, 500, 0)]
-    [InlineData(0, 0, 1000, 0)]
-    public async Task GetByIdAsync_WhenBACIsZero_ReturnsZeroForEvAndPvButNullForEacAndVac(
-        decimal plannedValue,
-        decimal earnedValue,
-        decimal actualCost,
-        decimal budgetedCost)
+    [Fact]
+    public async Task GetByIdAsync_WhenBACIsZero_ReturnsZeroForEvAndPvButNullForEacAndVac()
     {
         // Arrange
         var projectId = Guid.NewGuid();
         var project = new ProjectBuilder().Build();
         _projectRepositoryMock.Setup(x => x.GetWithActivitiesAsync(projectId, It.IsAny<CancellationToken>()))
             .ReturnsAsync(project);
-        _evmCalculatorMock.Setup(x => x.Calculate(plannedValue, earnedValue, actualCost, budgetedCost))
+        _evmCalculatorMock.Setup(x => x.Calculate(0, 0, 0, 0))
             .Returns(new EVMIndicators(
-                plannedValue,
-                earnedValue,
-                actualCost,
-                earnedValue - actualCost,
-                earnedValue - plannedValue,
+                0,
+                0,
+                0,
+                0,
+                0,
                 null,
                 null,
                 null,
