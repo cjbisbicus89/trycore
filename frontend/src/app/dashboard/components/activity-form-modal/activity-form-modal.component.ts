@@ -1,4 +1,5 @@
-import { Component, input, output, inject, OnInit, computed } from '@angular/core';
+import { Component, input, output, inject, OnInit, computed, DestroyRef } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
 import { ActivityService, CreateActivityRequest, UpdateActivityRequest } from '../../../core/services/activity.service';
@@ -105,6 +106,7 @@ import type { Activity } from '../../../core/models';
 export class ActivityFormModalComponent implements OnInit {
   private readonly fb = inject(FormBuilder);
   private readonly activityService = inject(ActivityService);
+  private readonly destroyRef = inject(DestroyRef);
 
   projectId = input.required<string>();
   activity = input<Activity | null>(null);
@@ -147,7 +149,7 @@ export class ActivityFormModalComponent implements OnInit {
         actualCost: formValue.actualCost!
       };
 
-      this.activityService.update(this.activity()!.id, request).subscribe({
+      this.activityService.update(this.activity()!.id, request).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
         next: () => {
           this.isSaving = false;
           this.saved.emit();
@@ -166,7 +168,7 @@ export class ActivityFormModalComponent implements OnInit {
         actualCost: formValue.actualCost!
       };
 
-      this.activityService.create(request).subscribe({
+      this.activityService.create(request).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
         next: () => {
           this.isSaving = false;
           this.saved.emit();

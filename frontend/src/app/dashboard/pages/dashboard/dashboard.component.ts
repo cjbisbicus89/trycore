@@ -1,4 +1,5 @@
-import { Component, signal, computed, inject, OnInit } from '@angular/core';
+import { Component, signal, computed, inject, OnInit, DestroyRef } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ProjectService } from '../../../core/services/project.service';
@@ -136,6 +137,7 @@ export class DashboardComponent implements OnInit {
   private readonly router = inject(Router);
   private readonly projectService = inject(ProjectService);
   private readonly activityService = inject(ActivityService);
+  private readonly destroyRef = inject(DestroyRef);
 
   project = signal<Project | null>(null);
   activities = signal<Activity[]>([]);
@@ -156,7 +158,7 @@ export class DashboardComponent implements OnInit {
     this.isLoading.set(true);
     this.error.set(null);
 
-    this.projectService.getById(projectId).subscribe({
+    this.projectService.getById(projectId).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: (project) => {
         this.project.set(project);
         this.loadActivities(projectId);
@@ -169,7 +171,7 @@ export class DashboardComponent implements OnInit {
   }
 
   loadActivities(projectId: string): void {
-    this.activityService.getByProjectId(projectId).subscribe({
+    this.activityService.getByProjectId(projectId).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: (activities) => {
         this.activities.set(activities);
         this.isLoading.set(false);

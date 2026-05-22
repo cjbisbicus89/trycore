@@ -1,4 +1,5 @@
-import { Component, signal, computed, inject } from '@angular/core';
+import { Component, signal, computed, inject, DestroyRef } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
 import { ProjectService, CreateProjectRequest } from '../../../../core/services/project.service';
@@ -126,6 +127,7 @@ import type { Project } from '../../../../core/models';
 export class ProjectListComponent {
   private readonly projectService = inject(ProjectService);
   private readonly fb = inject(FormBuilder);
+  private readonly destroyRef = inject(DestroyRef);
 
   projects = signal<Project[]>([]);
   isLoading = signal(true);
@@ -144,7 +146,7 @@ export class ProjectListComponent {
 
   loadProjects(): void {
     this.isLoading.set(true);
-    this.projectService.getAll().subscribe({
+    this.projectService.getAll().pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: (projects) => {
         this.projects.set(projects);
         this.isLoading.set(false);
@@ -163,7 +165,7 @@ export class ProjectListComponent {
     this.isCreating.set(true);
     const request: CreateProjectRequest = this.projectForm.value as CreateProjectRequest;
 
-    this.projectService.create(request).subscribe({
+    this.projectService.create(request).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: (project) => {
         this.projects.update((projects) => [...projects, project]);
         this.projectForm.reset();
